@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Agenda JM - v10 compacta</title>
+<title>Agenda JM - v11 pagamentos corrigidos</title>
 <!-- VERSAO 2026-05-31-10: modal do dia realmente compacto, remover Mover e corrigir arrastar na Agenda -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +43,7 @@ body.dark-mode .day.has-done{background:linear-gradient(135deg,#0d1711,#102014)}
 .field.full{grid-column:1/-1}.form-grid textarea,.day-add-grid textarea,.edit-grid textarea{border:1px solid var(--line);background:white;border-radius:14px;padding:11px 12px;width:100%;min-height:82px;resize:vertical;color:var(--ink)}.form-grid .wide,.day-add-grid .wide{grid-column:span 2}.edit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.edit-grid select{border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:white;color:var(--ink);width:100%}.edit-grid .full{grid-column:1/-1}.calendar-legend{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;color:var(--muted);font-size:12px;font-weight:800}.legend-dot{width:10px;height:10px;border-radius:999px;display:inline-block}.legend-dot.overdue{background:var(--danger)}.legend-dot.pending{background:#d99a1e}.legend-dot.done{background:var(--ok)}.agenda-bucket{display:grid;gap:10px;border:1px solid var(--line);background:rgba(255,255,255,.72);border-radius:18px;padding:14px}.agenda-bucket-title{font-size:13px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.event-extra{font-size:12px;color:var(--muted);font-weight:700;line-height:1.35}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.toast-note{font-size:12px;font-weight:900;color:var(--ok);min-height:16px}.stat-number.money-stat{font-size:25px;letter-spacing:-.04em}.agenda-list{display:grid;gap:14px}.agenda-empty{padding:18px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);background:rgba(255,255,255,.6)}
 body.dark-mode .calendar-legend,body.dark-mode .event-extra{color:var(--muted)}body.dark-mode .agenda-bucket,body.dark-mode .agenda-date-drop,body.dark-mode .agenda-drop-day,body.dark-mode .more-fields{background:#0b1220;border-color:var(--line);color:var(--ink)}body.dark-mode .form-grid textarea,body.dark-mode .day-add-grid textarea,body.dark-mode .edit-grid textarea,body.dark-mode .edit-grid select,body.dark-mode .details-grid input,body.dark-mode .details-grid textarea{background:#0b1220;color:var(--ink);border-color:var(--line)}
 
-.more-fields{grid-column:1/-1;border:1px solid var(--line);background:#fffaf2;border-radius:18px;padding:0;overflow:hidden}.more-fields summary{list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;font-weight:900;color:var(--ink);cursor:pointer}.more-fields summary::-webkit-details-marker{display:none}.more-fields summary span{font-size:12px;color:var(--muted);font-weight:800}.more-fields[open] summary{border-bottom:1px solid var(--line)}.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}.details-grid .full{grid-column:1/-1}.rich-empty{display:grid;gap:8px;align-items:start}.rich-empty strong{color:var(--ink);font-size:15px}.rich-empty span{line-height:1.35}.rich-empty .btn{justify-self:start;margin-top:4px}.agenda-drop-calendar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.agenda-drop-day{border:1px dashed rgba(107,114,128,.42);background:#fffaf2;border-radius:14px;padding:10px;text-align:left;font-weight:900;color:var(--ink)}.agenda-drop-day small{display:block;color:var(--muted);font-weight:800;margin-top:3px}.agenda-drop-day.drag-over{border-color:var(--blue);background:rgba(29,78,216,.08);outline:3px solid rgba(29,78,216,.14)}.agenda-date-drop{border:1px dashed rgba(107,114,128,.35);border-radius:16px;padding:10px;display:grid;gap:8px;background:rgba(255,253,249,.72)}.agenda-date-drop.drag-over{border-color:var(--blue);background:rgba(29,78,216,.08);outline:3px solid rgba(29,78,216,.14)}.agenda-date-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.agenda-drop-hint{font-size:11px;color:var(--muted);font-weight:900;text-transform:none;letter-spacing:0}.event.manual-draggable{cursor:grab;touch-action:none;user-select:none}.event.manual-draggable:active{cursor:grabbing}.event.dragging-source{opacity:.45}.drag-ghost{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;width:min(420px,calc(100vw - 32px));transform:translate3d(0,0,0);box-shadow:0 18px 44px rgba(22,43,73,.24);opacity:.96}.dragging-card [data-drop-date]{transition:.12s ease}.day.drag-over,.agenda-date-drop.drag-over,.agenda-drop-day.drag-over{border-color:var(--blue);background:rgba(29,78,216,.08);outline:3px solid rgba(29,78,216,.18)}
+.more-fields{grid-column:1/-1;border:1px solid var(--line);background:#fffaf2;border-radius:18px;padding:0;overflow:hidden}.more-fields summary{list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;font-weight:900;color:var(--ink);cursor:pointer}.more-fields summary::-webkit-details-marker{display:none}.more-fields summary span{font-size:12px;color:var(--muted);font-weight:800}.more-fields[open] summary{border-bottom:1px solid var(--line)}.details-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}.details-grid .full{grid-column:1/-1}.more-fields.always-open{padding:12px}.more-fields.always-open .details-grid{padding:0}.more-fields.always-open.compact textarea{min-height:54px;max-height:88px}.more-fields.always-open.compact input{padding:9px 10px}.more-fields.always-open.compact label{font-size:11px;margin-bottom:4px}.rich-empty{display:grid;gap:8px;align-items:start}.rich-empty strong{color:var(--ink);font-size:15px}.rich-empty span{line-height:1.35}.rich-empty .btn{justify-self:start;margin-top:4px}.agenda-drop-calendar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.agenda-drop-day{border:1px dashed rgba(107,114,128,.42);background:#fffaf2;border-radius:14px;padding:10px;text-align:left;font-weight:900;color:var(--ink)}.agenda-drop-day small{display:block;color:var(--muted);font-weight:800;margin-top:3px}.agenda-drop-day.drag-over{border-color:var(--blue);background:rgba(29,78,216,.08);outline:3px solid rgba(29,78,216,.14)}.agenda-date-drop{border:1px dashed rgba(107,114,128,.35);border-radius:16px;padding:10px;display:grid;gap:8px;background:rgba(255,253,249,.72)}.agenda-date-drop.drag-over{border-color:var(--blue);background:rgba(29,78,216,.08);outline:3px solid rgba(29,78,216,.14)}.agenda-date-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.agenda-drop-hint{font-size:11px;color:var(--muted);font-weight:900;text-transform:none;letter-spacing:0}.event.manual-draggable{cursor:grab;touch-action:none;user-select:none}.event.manual-draggable:active{cursor:grabbing}.event.dragging-source{opacity:.45}.drag-ghost{position:fixed;left:0;top:0;z-index:9999;pointer-events:none;width:min(420px,calc(100vw - 32px));transform:translate3d(0,0,0);box-shadow:0 18px 44px rgba(22,43,73,.24);opacity:.96}.dragging-card [data-drop-date]{transition:.12s ease}.day.drag-over,.agenda-date-drop.drag-over,.agenda-drop-day.drag-over{border-color:var(--blue);background:rgba(29,78,216,.08);outline:3px solid rgba(29,78,216,.18)}
 @media(max-width:1050px){.topbar,.layout{grid-template-columns:1fr;display:grid}.status-card{width:auto}.grid-stats{grid-template-columns:repeat(2,1fr)}.extra-dashboard{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr 1fr}.day-add-grid{grid-template-columns:1fr 1fr}.calendar-week .day{min-height:220px}.hero-main{display:grid}.today-chip{min-width:0}}
 @media(max-width:680px){.modal{padding:8px}.modal-card{border-radius:22px;padding:14px;margin:8px auto;max-height:calc(100dvh - 16px)}.modal-card.day-modal-card{padding:14px}.day-modal-title{font-size:20px}.notes-box,.day-add{padding:12px}.agenda-drop-calendar{grid-template-columns:repeat(2,minmax(0,1fr))}.details-grid{grid-template-columns:1fr}.more-fields summary{padding:12px}.more-fields summary span{display:none}.field.wide,.day-add-grid .wide,.form-grid .wide{grid-column:1/-1}.quick-add-mobile{display:grid;place-items:center}.list-tools{grid-template-columns:1fr}.edit-grid{grid-template-columns:1fr}.app{padding:14px 10px 40px}h1{font-size:30px}.grid-stats{grid-template-columns:1fr}.toolbar-search{grid-template-columns:1fr;min-width:100%}.quick-numbers{grid-template-columns:1fr}.weekdays,.calendar-month,.calendar-week{gap:4px}.day{min-height:74px;border-radius:14px;padding:7px}.mini{display:none}.calendar-week{grid-template-columns:1fr}.weekdays{display:none}.calendar-week .day{min-height:120px}.form-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}}
 
@@ -60,7 +60,7 @@ body.dark-mode .calendar-legend,body.dark-mode .event-extra{color:var(--muted)}b
 .day-modal-card .day-add-title{font-size:15px;margin-bottom:8px}
 .day-modal-card .day-add-grid{grid-template-columns:1.45fr .55fr .9fr .78fr .72fr auto;gap:8px}
 .day-modal-card .field label{font-size:11px;margin-bottom:4px}.day-modal-card input,.day-modal-card select,.day-modal-card textarea{padding:9px 10px}
-.day-modal-card .more-fields summary{padding:9px 11px}.day-modal-card .details-grid{padding:10px;gap:8px}
+.day-modal-card .more-fields.always-open{padding:9px}.day-modal-card .details-grid{padding:0;gap:8px}.day-modal-card .more-fields textarea{min-height:46px;max-height:70px}
 .day-modal-card .status-note,.day-modal-card .cloud-note{display:none}
 .dragging-card .modal.show{pointer-events:none}
 .event.manual-draggable{cursor:grab;touch-action:none;user-select:none}
@@ -200,13 +200,12 @@ body.dark-mode .calendar-legend,body.dark-mode .event-extra{color:var(--muted)}b
       <div class="field"><label>Categoria</label><select id="mCat" onchange="handleCategoryDefaults('m')"><option value="pessoal">Pessoal</option><option value="jm">JM Neto</option><option value="financeiro">Financeiro</option><option value="igreja">Igreja</option><option value="cliente">Cliente/Reunião</option><option value="obra">Obra/Visita</option><option value="faculdade">Faculdade/Pós</option><option value="saude">Saúde</option><option value="casa">Casa</option><option value="familia">Família</option><option value="aniversario">Aniversário</option><option value="outros">Outros</option></select></div>
       <div class="field"><label>Repetição</label><select id="mRepeat"><option value="none">Não repetir</option><option value="weekly">Toda semana</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select></div>
       <div class="field"><label>Prioridade</label><select id="mPriority"><option value="normal">Normal</option><option value="alta">Alta</option><option value="baixa">Baixa</option></select></div>
-      <details class="more-fields" id="manualMoreDetails">
-        <summary>Mais detalhes <span>local, cliente, projeto e observação</span></summary>
+      <div class="more-fields always-open compact" id="manualMoreDetails">
         <div class="details-grid">
           <div class="field"><label>Local / Cliente / Projeto</label><input id="mLocation" placeholder="Ex: WhatsApp, obra, cliente, endereço..."></div>
           <div class="field full"><label>Observação</label><textarea id="mNote" placeholder="Detalhes rápidos, combinado, documentos para levar..."></textarea></div>
         </div>
-      </details>
+      </div>
       <button class="btn gold" type="submit">Salvar</button>
     </form>
   </section>
@@ -254,13 +253,12 @@ body.dark-mode .calendar-legend,body.dark-mode .event-extra{color:var(--muted)}b
         <div class="field"><label>Categoria</label><select id="dmCat" onchange="handleCategoryDefaults('dm')"><option value="pessoal">Pessoal</option><option value="jm">JM Neto</option><option value="financeiro">Financeiro</option><option value="igreja">Igreja</option><option value="cliente">Cliente/Reunião</option><option value="obra">Obra/Visita</option><option value="faculdade">Faculdade/Pós</option><option value="saude">Saúde</option><option value="casa">Casa</option><option value="familia">Família</option><option value="aniversario">Aniversário</option><option value="outros">Outros</option></select></div>
         <div class="field"><label>Repetição</label><select id="dmRepeat"><option value="none">Não repetir</option><option value="weekly">Toda semana</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select></div>
         <div class="field"><label>Prioridade</label><select id="dmPriority"><option value="normal">Normal</option><option value="alta">Alta</option><option value="baixa">Baixa</option></select></div>
-        <details class="more-fields" id="dayMoreDetails">
-          <summary>Mais detalhes <span>local, cliente, projeto e observação</span></summary>
+        <div class="more-fields always-open compact" id="dayMoreDetails">
           <div class="details-grid">
             <div class="field"><label>Local / Cliente / Projeto</label><input id="dmLocation" placeholder="Ex: WhatsApp, obra, cliente, endereço..."></div>
             <div class="field full"><label>Observação</label><textarea id="dmNote" placeholder="Detalhes rápidos do compromisso..."></textarea></div>
           </div>
-        </details>
+        </div>
         <button class="btn gold" type="submit">Adicionar</button>
       </form>
       <div class="status-note">Compromissos comuns são concluídos automaticamente depois que passam. Financeiro e prazos só ficam concluídos quando você marcar.</div><div class="cloud-note" id="cloudSaveHint">Se estiver conectado, compromissos manuais e notas também são salvos na nuvem.</div>
@@ -294,11 +292,32 @@ function isProjectClosed(b){const st=normStatus([b.status,b.projectStatus].join(
 function projectName(b){return Array.isArray(b.projetos)?b.projetos.join(', '):(b.projeto||b.tipo||'Projeto')}
 function paymentSum(b){const arr=Array.isArray(b.payments)?b.payments:[];let sum=arr.reduce((acc,p)=>acc+(Number(p.value??p.valor??p.amount??p.total??0)||0),0);return Math.max(Number(b.received)||0,sum)}
 function budgetTotal(b){return Number(b.negociado||b.final||b.total||b.valor||b.price||0)||0}
-function paymentDone(b){const st=normStatus([b.financeStatus,b.paymentStatus,b.statusPagamento,b.situacaoPagamento,b.paymentSituation].join(' ')); if(b.paid||b.quitado||b.pago||b.paymentPaid||b.receivedAt||b.paidAt) return true; if(st.includes('pago')||st.includes('quitado')||st.includes('recebido')||st.includes('concluido')) return true; const arr=Array.isArray(b.payments)?b.payments:[]; if(arr.length) return arr.every(paymentIsDone); const paid=Number(b.received||b.valorRecebido||b.totalRecebido||0)||0, total=budgetTotal(b); if(total>0) return paid>=total-0.01; return paid>0}
+function truthyPaid(v){
+  if(v===true)return true;
+  if(v===false||v==null||v==='')return false;
+  const t=normStatus(v);
+  return ['true','sim','s','yes','y','1','pago','paga','recebido','recebida','quitado','quitada','concluido','concluida'].includes(t);
+}
+function paidNumber(v){
+  if(typeof v==='number')return v;
+  if(typeof v==='string'){const n=Number(v.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'));return Number.isFinite(n)?n:0}
+  return 0;
+}
+function paymentDone(b){const st=normStatus([b.financeStatus,b.paymentStatus,b.statusPagamento,b.situacaoPagamento,b.paymentSituation,b.situacaoFinanceira,b.financeiro].join(' ')); if(truthyPaid(b.paid)||truthyPaid(b.quitado)||truthyPaid(b.pago)||truthyPaid(b.paymentPaid)||b.receivedAt||b.paidAt||b.pagoEm||b.recebidoEm) return true; if(st.includes('pago')||st.includes('quitado')||st.includes('recebido')||st.includes('concluido')) return true; const arr=Array.isArray(b.payments)?b.payments:[]; if(arr.length) return arr.every(paymentIsDone); const paid=paidNumber(b.receivedAmount??b.paidAmount??b.valorRecebido??b.valorPago??b.totalRecebido??b.received??0), total=budgetTotal(b); if(total>0) return paid>=total-0.01; return paid>0}
 function recurrenceDates(ev){if(!ev.repeat||ev.repeat==='none')return [ev.date]; const dates=[]; const base=parseDate(ev.date); if(!base)return dates; const start=new Date(current.getFullYear()-1,0,1), end=new Date(current.getFullYear()+2,11,31); let d=new Date(base); const next=()=>{ if(ev.repeat==='weekly')d.setDate(d.getDate()+7); else if(ev.repeat==='monthly')d=new Date(d.getFullYear(),d.getMonth()+1,base.getDate()); else d=new Date(d.getFullYear()+1,base.getMonth(),base.getDate()); }; while(d<start)next(); for(let i=0;i<160&&d<=end;i++){dates.push(iso(d)); next(); } return dates}
 function paymentDate(p){return dateOnly(p?.due||p?.dueDate||p?.vencimento||p?.date||p?.data||p?.paidAt||p?.receivedAt)}
 function paymentAmount(p){return Number(p?.value??p?.valor??p?.amount??p?.total??p?.price??0)||0}
-function paymentIsDone(p){if(!p)return false;const st=normStatus(p.status||p.situacao||p.state||'');return !!(p.paid||p.received||p.receivedAt||p.paidAt||st.includes('pago')||st.includes('recebido')||st.includes('quitado'))}
+function paymentIsDone(p){
+  if(!p)return false;
+  const st=normStatus([p.status,p.situacao,p.state,p.paymentStatus,p.financeStatus,p.situacaoPagamento].join(' '));
+  if(st.includes('pago')||st.includes('paga')||st.includes('recebido')||st.includes('recebida')||st.includes('quitado')||st.includes('quitada')||st.includes('concluido')||st.includes('concluida'))return true;
+  if(truthyPaid(p.paid)||truthyPaid(p.pago)||truthyPaid(p.quitado)||truthyPaid(p.received)||truthyPaid(p.recebido)||truthyPaid(p.done)||truthyPaid(p.completed))return true;
+  if(p.receivedAt||p.paidAt||p.pagoEm||p.recebidoEm||p.dataPagamento||p.dataRecebimento)return true;
+  const amount=paymentAmount(p);
+  const paid=paidNumber(p.receivedAmount??p.paidAmount??p.valorRecebido??p.valorPago??p.receivedValue??p.paidValue??(typeof p.received==='number'?p.received:0));
+  if(amount>0&&paid>=amount-0.01)return true;
+  return false;
+}
 function priorityLabel(p){return p==='alta'?'Alta prioridade':p==='baixa'?'Baixa prioridade':'Prioridade normal'}
 function repeatLabel(r){return r==='weekly'?'Toda semana':r==='monthly'?'Todo mês':r==='yearly'?'Todo ano':'Não repetir'}
 function priorityRank(p){return p==='alta'?0:p==='normal'?1:2}
