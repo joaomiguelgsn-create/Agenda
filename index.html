@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Agenda JM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,148 +11,182 @@
 <script src="config.js"></script>
 <style>
 :root{
-  --aqua:#7de3d4; --aqua2:#d8fbf5; --aqua3:#effdfa; --aquaDark:#0f766e;
-  --ink:#0f172a; --muted:#64748b; --line:#d7e7e3; --card:#ffffff; --soft:#f7fffd;
-  --blue:#1d4ed8; --red:#b91c1c; --purple:#6d28d9; --orange:#c2410c; --green:#15803d;
-  --shadow:0 22px 60px rgba(15,118,110,.12); --radius:28px;
+  --ink:#132238; --muted:#6b7280; --line:#e6dccd; --card:#fffdf9;
+  --bg:#f7f0e6; --bg2:#fff8ed; --navy:#162b49; --navy2:#203c63;
+  --gold:#c98a2e; --gold2:#f3d7a3; --cream:#fff7eb; --danger:#b42318;
+  --warn:#c05621; --ok:#166534; --blue:#1d4ed8; --purple:#6941c6;
+  --shadow:0 18px 48px rgba(22,43,73,.14); --radius:24px;
 }
 *{box-sizing:border-box} html,body{margin:0;min-height:100%}
-body{font-family:Inter,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 0%, rgba(125,227,212,.42), transparent 32%),linear-gradient(135deg,#fbfffd 0%,#effdfa 48%,#f5fffd 100%)}
-button,input,select,textarea{font:inherit}.app{max-width:1440px;margin:auto;padding:22px 18px 60px}.top{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:16px;padding:22px;border:1px solid var(--line);border-radius:34px;background:linear-gradient(135deg,#fff 0%,var(--aqua3) 100%);box-shadow:var(--shadow)}
-.brand h1{margin:0;font-size:34px;letter-spacing:-.05em}.brand p{margin:6px 0 0;color:var(--muted);font-weight:650}.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.btn{border:1px solid var(--line);background:#fff;color:var(--ink);padding:10px 13px;border-radius:16px;font-weight:900;cursor:pointer}.btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(15,23,42,.07)}.btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--aquaDark),#14b8a6);color:white}.btn.soft{background:var(--aqua2);border-color:#b5f0e8;color:#0f766e}.seg{display:flex;padding:4px;border:1px solid var(--line);background:#fff;border-radius:18px}.seg button{border:0;background:transparent;padding:9px 14px;border-radius:14px;font-weight:950;color:var(--muted);cursor:pointer}.seg button.active{background:var(--ink);color:#fff}.dateJump{min-width:160px;border:1px solid var(--line);background:#fff;border-radius:16px;padding:10px 12px;font-weight:850;color:var(--ink);outline:none}
-.loginBox{margin-bottom:14px;padding:15px 16px;border:1px solid #b5f0e8;border-radius:24px;background:linear-gradient(135deg,#ffffff,var(--aqua2));box-shadow:0 14px 35px rgba(15,118,110,.08)}.loginBox b{display:block;margin-bottom:4px}.loginInline{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.input,select,textarea{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:15px;padding:11px 12px;font-weight:750;outline:none}.input:focus,.dateJump:focus,select:focus,textarea:focus{border-color:#14b8a6;box-shadow:0 0 0 4px rgba(20,184,166,.12)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}.stat,.card{background:rgba(255,255,255,.86);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(8px)}.stat{padding:17px 18px;position:relative;overflow:hidden}.stat:after{content:'';position:absolute;right:-28px;top:-28px;width:90px;height:90px;border-radius:999px;background:var(--aqua2)}.stat span{position:relative;z-index:1;color:var(--muted);font-weight:850;font-size:13px}.stat b{position:relative;z-index:1;display:block;margin-top:6px;font-size:34px;letter-spacing:-.05em}.stat small{position:relative;z-index:1;color:var(--muted);font-weight:650}.layout{display:grid;grid-template-columns:1fr 390px;gap:16px}.card{padding:18px}.calHead{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;margin-bottom:14px}.periodTitle{margin:0;text-align:center;text-transform:capitalize;font-size:26px;letter-spacing:-.05em}.navBtns{display:flex;gap:8px}.weekdays,.monthGrid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.weekdays div{text-align:center;color:#758193;font-weight:950;font-size:13px;padding:8px}.day{min-height:122px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--soft));border-radius:21px;padding:10px;text-align:left;cursor:pointer;overflow:hidden;position:relative}.day:hover{border-color:#8eeadd}.day.empty{opacity:.35;cursor:default}.day.selected{outline:3px solid rgba(20,184,166,.24);border-color:#14b8a6}.day.today:before{content:'Hoje';position:absolute;top:8px;right:8px;padding:3px 7px;border-radius:999px;background:var(--aqua2);color:#0f766e;font-size:10px;font-weight:950}.num{font-size:20px;font-weight:950;margin-bottom:8px}.chips{display:flex;flex-direction:column;gap:5px}.chip{display:flex;align-items:center;gap:5px;max-width:100%;border-radius:999px;padding:5px 8px;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chip span:last-child{overflow:hidden;text-overflow:ellipsis}.more{font-size:11px;color:var(--muted);font-weight:900;padding:4px 3px}.c-jm{background:#dbeafe;color:var(--blue)}.c-pessoal{background:#ffedd5;color:var(--orange)}.c-igreja{background:#dcfce7;color:var(--green)}.c-prazo{background:#fee2e2;color:var(--red)}.c-financeiro{background:#ede9fe;color:var(--purple)}.side h3{margin:0;font-size:21px;letter-spacing:-.04em}.muted{color:var(--muted)}.eventList{display:grid;gap:10px;margin-top:14px}.event{border:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--soft));border-radius:18px;padding:13px}.eventTop{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.eventTitle{font-weight:950;line-height:1.25}.badge{font-size:11px;border:1px solid var(--line);border-radius:999px;padding:5px 8px;font-weight:900;color:var(--muted);white-space:nowrap}.event small{display:block;color:var(--muted);font-weight:700;margin-top:5px}.alerts{display:grid;gap:8px;margin:14px 0}.alert{padding:11px 12px;border-radius:16px;font-weight:850;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412}.filters{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.form{display:none;margin-top:14px}.form.open{display:grid;gap:10px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.weekView{display:none}.weekRows{display:grid;grid-template-columns:94px 1fr;gap:8px}.hour{color:var(--muted);font-weight:950;text-align:right;padding-top:12px;text-transform:capitalize}.slot{min-height:58px;border-top:1px solid var(--line);padding-top:5px}.weekEvent{display:inline-flex;margin:5px 5px 0 0}.emptyMsg{padding:14px;border:1px dashed var(--line);border-radius:18px;background:var(--soft);color:var(--muted);font-weight:750}.footerNote{margin-top:16px;text-align:center;color:var(--muted);font-size:12px;font-weight:800}
-@media(max-width:1050px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:720px){.app{padding:14px}.top{align-items:flex-start;flex-direction:column}.actions{justify-content:flex-start}.stats{grid-template-columns:1fr}.calHead{grid-template-columns:1fr}.periodTitle{text-align:left}.day{min-height:76px;border-radius:15px}.chip{display:none}.num{font-size:17px}.filters,.two{grid-template-columns:1fr}.weekdays,.monthGrid{gap:4px}.card{padding:12px}.loginInline{display:grid}.dateJump{width:100%}}
+body{font-family:Inter,Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,#fbf4ea 0%,#fffaf2 42%,#eef2f8 100%)}
+button,input,select,textarea{font:inherit} button{cursor:pointer}
+.app{max-width:1320px;margin:0 auto;padding:24px 16px 64px}.topbar{display:flex;gap:16px;align-items:stretch;justify-content:space-between;margin-bottom:18px}.hero{flex:1;background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:32px;padding:28px;color:white;box-shadow:var(--shadow);position:relative;overflow:hidden}.hero:after{content:"";position:absolute;right:-90px;top:-130px;width:320px;height:320px;background:rgba(201,138,46,.30);border-radius:50%}.eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:12px;font-weight:800;color:#f7d79b;margin:0 0 8px}h1{font-size:38px;line-height:1;margin:0 0 8px;letter-spacing:-.04em}.subtitle{color:rgba(255,255,255,.78);margin:0;max-width:690px;line-height:1.5}.status-card{width:330px;background:var(--card);border:1px solid var(--line);border-radius:32px;padding:20px;box-shadow:var(--shadow)}.status-card h3{margin:0 0 10px}.cloud-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:9px 0;border-bottom:1px solid #f1e7d8}.cloud-row:last-child{border-bottom:0}.btn{border:0;border-radius:16px;background:var(--navy);color:white;padding:12px 16px;font-weight:800}.btn.secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}.btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}.btn.gold{background:var(--gold);color:#201408}.btn.small{padding:9px 12px;border-radius:12px;font-size:13px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0}.tabs{display:flex;gap:8px;background:#fff8ed;border:1px solid var(--line);padding:6px;border-radius:18px}.tabs button{border:0;background:transparent;color:var(--muted);font-weight:800;padding:10px 14px;border-radius:14px}.tabs button.active{background:var(--navy);color:white}.jump{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.jump input{border:1px solid var(--line);background:white;border-radius:14px;padding:11px 12px;color:var(--ink)}.grid-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.card{background:rgba(255,253,249,.88);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:0 10px 28px rgba(22,43,73,.06);backdrop-filter:blur(8px)}.stat-label{margin:0 0 8px;color:var(--muted);font-size:13px;font-weight:700}.stat-number{font-size:32px;font-weight:900;letter-spacing:-.04em}.layout{display:grid;grid-template-columns:1.45fr .82fr;gap:18px;align-items:start}.calendar-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.calendar-title{font-size:24px;font-weight:900;letter-spacing:-.03em}.navbtns{display:flex;gap:8px}.weekdays,.calendar-month,.calendar-week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}.weekdays div{text-align:center;color:var(--muted);font-size:12px;font-weight:900;padding:8px 0}.day{min-height:112px;border:1px solid var(--line);background:white;border-radius:18px;padding:10px;text-align:left;color:var(--ink);position:relative;overflow:hidden}.day:hover{border-color:var(--gold);box-shadow:0 10px 20px rgba(201,138,46,.10)}.day.empty{background:rgba(255,255,255,.45);cursor:default}.day.selected{outline:3px solid rgba(201,138,46,.45)}.day.today .num{background:var(--navy);color:white}.num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:10px;font-weight:900;font-size:13px;margin-bottom:6px}.mini{display:flex;align-items:center;gap:5px;max-width:100%;border-radius:999px;padding:4px 7px;font-size:11px;font-weight:800;margin:4px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini span{overflow:hidden;text-overflow:ellipsis}.mini.prazo{background:#fff0d2;color:#8a4c00}.mini.financeiro{background:#e8efff;color:#1d4ed8}.mini.manual{background:#f2e8ff;color:#6941c6}.more{font-size:11px;color:var(--muted);font-weight:800;margin-top:4px}.calendar-week .day{min-height:360px}.week-date{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:4px}.side h2,.section-title{font-size:20px;margin:0 0 8px}.muted{color:var(--muted)}.selected-date-card{display:none}.selected-date-card.show{display:block}.big-date{background:linear-gradient(135deg,#fff,#fff7eb);border:1px solid var(--line);border-radius:22px;padding:16px;margin-bottom:12px}.big-date .dayname{color:var(--muted);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.12em}.big-date .datefull{font-size:24px;font-weight:900;margin-top:4px}.event-list{display:grid;gap:10px;margin-top:12px}.event{background:white;border:1px solid var(--line);border-radius:18px;padding:14px;display:grid;gap:8px}.event.clickable{cursor:pointer}.event.clickable:hover{border-color:var(--gold);box-shadow:0 10px 22px rgba(201,138,46,.12)}.event-top{display:flex;justify-content:space-between;gap:12px;align-items:start}.event-title{font-weight:900;line-height:1.25}.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900;border:1px solid transparent}.pill.pending{background:#fff5d9;color:#8a4c00}.pill.overdue{background:#fee4e2;color:var(--danger)}.pill.done{background:#dcfce7;color:var(--ok)}.pill.manual{background:#f2e8ff;color:#6941c6}.pill.financeiro{background:#e8efff;color:#1d4ed8}.pill.prazo{background:#fff0d2;color:#8a4c00}.pill.portal{background:#eef2f8;color:var(--navy)}.alertbox{border-left:5px solid var(--gold);background:#fff7eb}.login{display:none;margin-top:14px;gap:8px}.login.show{display:grid}.login input{border:1px solid var(--line);border-radius:14px;padding:11px 12px}.list-section{margin-top:18px}.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.filters button{border:1px solid var(--line);background:white;color:var(--muted);border-radius:999px;padding:9px 13px;font-weight:900}.filters button.active{background:var(--navy);color:white}.form-grid{display:grid;grid-template-columns:1.4fr .7fr .6fr .7fr .8fr auto;gap:10px;align-items:end;margin-top:12px}.form-grid input,.form-grid select{border:1px solid var(--line);background:white;border-radius:14px;padding:11px 12px;width:100%}.field label{display:block;font-size:12px;font-weight:900;color:var(--muted);margin-bottom:6px}.modal{position:fixed;inset:0;background:rgba(10,22,38,.46);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}.modal.show{display:flex}.modal-card{max-width:720px;width:100%;background:white;border-radius:28px;padding:22px;border:1px solid var(--line);box-shadow:var(--shadow)}.modal-head{display:flex;justify-content:space-between;gap:16px;align-items:start}.close{border:0;background:#f6efe6;border-radius:12px;width:38px;height:38px;font-size:20px}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.detail{background:#fff8ed;border:1px solid var(--line);border-radius:16px;padding:12px}.detail small{display:block;color:var(--muted);font-weight:900;margin-bottom:4px}.empty-state{padding:18px;border:1px dashed var(--line);border-radius:18px;color:var(--muted);background:rgba(255,255,255,.6)}
+@media(max-width:1050px){.topbar,.layout{grid-template-columns:1fr;display:grid}.status-card{width:auto}.grid-stats{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr 1fr}.calendar-week .day{min-height:220px}}
+@media(max-width:680px){.app{padding:14px 10px 40px}h1{font-size:30px}.grid-stats{grid-template-columns:1fr}.weekdays,.calendar-month,.calendar-week{gap:4px}.day{min-height:74px;border-radius:14px;padding:7px}.mini{display:none}.calendar-week{grid-template-columns:1fr}.weekdays{display:none}.calendar-week .day{min-height:120px}.form-grid{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
-  <header class="top">
-    <div class="brand"><h1>Agenda JM</h1><p>Compromissos + entregas e pagamentos puxados automaticamente do sistema de controle.</p></div>
-    <div class="actions">
-      <div class="seg"><button id="monthBtn" class="active" onclick="setView('month')">Mês</button><button id="weekBtn" onclick="setView('week')">Semana</button></div>
-      <button class="btn soft" onclick="goToday()">Hoje</button>
-      <input class="dateJump" id="jumpDate" type="date" title="Ir para uma data específica">
-      <button class="btn" onclick="jumpToDate()">Ir para data</button>
-      <button class="btn primary" onclick="toggleForm()">+ Novo</button>
-    </div>
-  </header>
-
-  <section id="loginBox" class="loginBox"></section>
-
-  <section class="stats">
-    <div class="stat"><span>Hoje</span><b id="sToday">0</b><small>itens na agenda</small></div>
-    <div class="stat"><span>Próximos 7 dias</span><b id="sWeek">0</b><small>eventos e prazos</small></div>
-    <div class="stat"><span>Entregas</span><b id="sDeliveries">0</b><small>vindas do controle</small></div>
-    <div class="stat"><span>Pagamentos</span><b id="sPayments">0</b><small>vindos do controle</small></div>
-  </section>
-
-  <div class="layout">
-    <main class="card">
-      <div class="calHead">
-        <div class="navBtns"><button class="btn" onclick="changePeriod(-1)">‹</button><button class="btn" onclick="changePeriod(1)">›</button></div>
-        <h2 class="periodTitle" id="periodTitle">Calendário</h2>
-        <button class="btn soft" onclick="loadCloudState(true)">↻ Atualizar controle</button>
+  <div class="topbar">
+    <section class="hero">
+      <p class="eyebrow">JM Neto Engenharia</p>
+      <h1>Agenda JM</h1>
+      <p class="subtitle">Compromissos manuais, entregas e pagamentos vindos automaticamente do sistema de controle.</p>
+    </section>
+    <aside class="status-card">
+      <h3>Nuvem</h3>
+      <div class="cloud-row"><span>Status</span><b id="cloudStatus">Verificando...</b></div>
+      <div class="cloud-row"><span>Última leitura</span><b id="cloudLast">—</b></div>
+      <div class="cloud-row"><span>Projetos lidos</span><b id="cloudCount">0</b></div>
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn small" onclick="loadCloud(true)">Atualizar</button>
+        <button class="btn secondary small" onclick="toggleLogin()" id="loginToggle">Entrar</button>
       </div>
-      <div id="monthView"><div class="weekdays"><div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div><div class="monthGrid" id="monthGrid"></div></div>
-      <div id="weekView" class="weekView"><div class="weekRows" id="weekRows"></div></div>
-    </main>
-
-    <aside class="side">
-      <div class="card">
-        <h3 id="selectedTitle">Hoje</h3><p class="muted" id="selectedSub">Selecione uma data.</p>
-        <div class="eventList" id="selectedEvents"></div>
-      </div>
-      <div class="card" style="margin-top:14px">
-        <h3>Alertas</h3><div class="alerts" id="alerts"></div>
-      </div>
-      <div class="card" style="margin-top:14px">
-        <h3>Novo compromisso</h3><p class="muted">Compromissos manuais ficam salvos neste navegador.</p>
-        <form id="manualForm" class="form" onsubmit="addManual(event)">
-          <input class="input" id="newTitle" placeholder="Título" required>
-          <div class="two"><input class="input" id="newDate" type="date" required><input class="input" id="newTime" type="time" required></div>
-          <select id="newCat"><option value="jm">JM Neto</option><option value="pessoal">Pessoal</option><option value="igreja">Igreja</option></select>
-          <textarea class="input" id="newNotes" placeholder="Observações"></textarea>
-          <button class="btn primary" type="submit">Salvar</button>
-        </form>
-        <button class="btn soft" onclick="toggleForm()">Abrir cadastro</button>
+      <div class="login" id="loginBox">
+        <input id="email" type="email" placeholder="E-mail do sistema de controle">
+        <input id="pass" type="password" placeholder="Senha">
+        <button class="btn gold" onclick="signIn()">Entrar e carregar</button>
       </div>
     </aside>
   </div>
 
-  <section class="card" style="margin-top:16px">
-    <div class="filters"><input class="input" id="search" placeholder="Buscar..." oninput="render()"><select id="catFilter" onchange="render()"><option value="todos">Todas as categorias</option><option value="jm">JM Neto</option><option value="pessoal">Pessoal</option><option value="igreja">Igreja</option><option value="prazo">Entregas</option><option value="financeiro">Pagamentos</option></select></div>
-    <div class="eventList" id="allEvents"></div>
+  <div class="toolbar">
+    <div class="tabs">
+      <button id="tabMonth" class="active" onclick="setView('month')">Mês</button>
+      <button id="tabWeek" onclick="setView('week')">Semana</button>
+    </div>
+    <div class="jump">
+      <button class="btn secondary small" onclick="goToday()">Hoje</button>
+      <input id="jumpDate" type="date">
+      <button class="btn small" onclick="jumpToDate()">Ir para data</button>
+    </div>
+  </div>
+
+  <section class="grid-stats">
+    <div class="card"><p class="stat-label">Hoje</p><div class="stat-number" id="stToday">0</div><p class="muted">eventos</p></div>
+    <div class="card"><p class="stat-label">Pendentes</p><div class="stat-number" id="stPending">0</div><p class="muted">a fazer/receber</p></div>
+    <div class="card"><p class="stat-label">Atrasados</p><div class="stat-number" id="stOverdue">0</div><p class="muted">não concluídos</p></div>
+    <div class="card"><p class="stat-label">Concluídos</p><div class="stat-number" id="stDone">0</div><p class="muted">entregues/recebidos</p></div>
   </section>
-  <div class="footerNote">Agenda JM • versão com login persistente e leitura automática do jm_state</div>
+
+  <section class="layout">
+    <div class="card">
+      <div class="calendar-head">
+        <div class="calendar-title" id="calTitle">—</div>
+        <div class="navbtns">
+          <button class="btn ghost small" onclick="movePeriod(-1)">‹</button>
+          <button class="btn ghost small" onclick="movePeriod(1)">›</button>
+        </div>
+      </div>
+      <div class="weekdays"><div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div>
+      <div id="calendar" class="calendar-month"></div>
+    </div>
+    <aside class="side">
+      <div class="card selected-date-card show" id="dayPanel">
+        <div class="big-date"><div class="dayname" id="dayName">Hoje</div><div class="datefull" id="dayFull">—</div></div>
+        <div id="dayEvents" class="event-list"></div>
+      </div>
+      <div class="card alertbox">
+        <h2>Alertas</h2>
+        <p class="muted" style="margin:0 0 10px">Próximos e atrasados, sem contar itens já concluídos.</p>
+        <div id="alerts" class="event-list"></div>
+      </div>
+    </aside>
+  </section>
+
+  <section class="card list-section">
+    <h2 class="section-title">Todos os compromissos</h2>
+    <p class="muted" style="margin:0">Clique em um compromisso para abrir os detalhes e ir para a data dele no calendário.</p>
+    <div class="filters">
+      <button class="active" data-filter="all" onclick="setListFilter('all')">Todos</button>
+      <button data-filter="pending" onclick="setListFilter('pending')">Pendentes</button>
+      <button data-filter="overdue" onclick="setListFilter('overdue')">Atrasados</button>
+      <button data-filter="done" onclick="setListFilter('done')">Concluídos</button>
+    </div>
+    <div id="allEvents" class="event-list"></div>
+  </section>
+
+  <section class="card list-section">
+    <h2 class="section-title">Novo compromisso manual</h2>
+    <form class="form-grid" onsubmit="addManual(event)">
+      <div class="field"><label>Título</label><input id="mTitle" required placeholder="Ex: reunião, visita, igreja, prazo pessoal"></div>
+      <div class="field"><label>Data</label><input id="mDate" type="date" required></div>
+      <div class="field"><label>Hora</label><input id="mTime" type="time" value="09:00"></div>
+      <div class="field"><label>Categoria</label><select id="mCat"><option value="manual">Pessoal</option><option value="manual">JM Neto</option><option value="manual">Igreja</option></select></div>
+      <div class="field"><label>Repetição</label><select id="mRepeat"><option value="none">Não repetir</option><option value="monthly">Todo mês</option><option value="yearly">Todo ano</option></select></div>
+      <button class="btn gold" type="submit">Salvar</button>
+    </form>
+  </section>
+</div>
+
+<div class="modal" id="modal" onclick="if(event.target.id==='modal')closeModal()">
+  <div class="modal-card">
+    <div class="modal-head"><div><span id="modalPill" class="pill pending">Evento</span><h2 id="modalTitle" style="margin:10px 0 0">—</h2><p id="modalSub" class="muted" style="margin:6px 0 0">—</p></div><button class="close" onclick="closeModal()">×</button></div>
+    <div id="modalDetails" class="detail-grid"></div>
+  </div>
 </div>
 
 <script>
-const STORE='agenda_jm_manual_v5';
-let view='month', cursor=new Date(), selected=key(new Date()), cloudState=null, sb=null, cloudUser=null;
-cursor.setDate(1); document.getElementById('jumpDate').value=selected;
+let sb=null, cloudUser=null, current=new Date(), selected=iso(new Date()), view='month', listFilter='all';
+current.setDate(1); let weekBase=startOfWeek(new Date());
+let portalState={budgets:[],tasks:[]};
 let manualEvents=loadManual();
-function cfg(){return !!(window.JM_SUPABASE_URL && window.JM_SUPABASE_ANON_KEY)}
-function key(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function parseDate(v){return new Date(String(v||'')+'T12:00:00')}
-function fmt(v,opt){return parseDate(v).toLocaleDateString('pt-BR',opt||{day:'2-digit',month:'2-digit',year:'numeric'})}
-function money(v){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(v||0))}
-function loadManual(){try{return JSON.parse(localStorage.getItem(STORE)||'[]')}catch(e){return[]}}
-function saveManual(){localStorage.setItem(STORE,JSON.stringify(manualEvents))}
-function today(){return key(new Date())}
-function daysFromToday(date){return Math.ceil((parseDate(date)-parseDate(today()))/86400000)}
-function projectName(b){if(!b)return'Projeto'; if(Array.isArray(b.projetos)&&b.projetos.length)return b.projetos.join(', '); return b.projeto||b.tipo||b.servico||'Projeto'}
-function finalValue(b){return Number(b.final||b.total||b.valorFinal||b.valor||b.price||0)||0}
-function paidTotal(b){return (Array.isArray(b.payments)?b.payments:[]).reduce((s,p)=>s+(Number(p.amount||p.valor||p.value||0)||0),0)}
-function normalizeDate(v){if(!v)return''; if(/^\d{4}-\d{2}-\d{2}/.test(String(v)))return String(v).slice(0,10); if(/^\d{2}\/\d{2}\/\d{4}$/.test(String(v))){const [d,m,y]=String(v).split('/');return `${y}-${m}-${d}`} return String(v).slice(0,10)}
-function portalEvents(){
-  const budgets=Array.isArray(cloudState?.budgets)?cloudState.budgets:[]; let ev=[];
-  budgets.forEach((b,i)=>{
-    const id=b.id||i, cliente=b.cliente||b.client||'Cliente', proj=projectName(b);
-    const entrega=normalizeDate(b.entrega||b.deliveryDate||b.dataEntrega||b.prazoEntrega);
-    if(entrega) ev.push({id:'ent-'+id,title:`Entrega · ${cliente}`,full:`Entregar ${proj} — ${cliente}`,date:entrega,time:'09:00',cat:'prazo',source:'portal',notes:`Prazo de entrega vindo do sistema de controle. ${proj}`});
-    const parcelas=Array.isArray(b.payments)?b.payments:[];
-    let addedInstallments=false;
-    parcelas.forEach((p,pi)=>{const due=normalizeDate(p.due||p.date||p.vencimento||p.data||p.paymentDue); if(!due)return; addedInstallments=true; const label=p.label||p.nome||p.desc||`Parcela ${pi+1}`; ev.push({id:`pay-${id}-${pi}`,title:`Pagamento · ${cliente}`,full:`${label} — ${cliente}`,date:due,time:'10:00',cat:'financeiro',source:'portal',notes:`Pagamento vindo do sistema de controle. Valor: ${money(p.amount||p.valor||p.value||0)}`})});
-    if(!addedInstallments){const due=normalizeDate(b.paymentDue||b.vencimento||b.dataPagamento||b.paymentDate); if(due){const total=finalValue(b), paid=paidTotal(b), rest=Math.max(0,total-paid); ev.push({id:'pay-'+id,title:`Pagamento · ${cliente}`,full:`Receber pagamento — ${cliente}`,date:due,time:'10:00',cat:'financeiro',source:'portal',notes: total?`A receber: ${money(rest)}. Total: ${money(total)}.`:'Vencimento de pagamento vindo do sistema de controle.'})}}
-  });
-  return ev;
-}
-function allEvents(){return [...manualEvents,...portalEvents()].sort((a,b)=>(a.date+' '+a.time).localeCompare(b.date+' '+b.time))}
-function filtered(){const q=(document.getElementById('search')?.value||'').toLowerCase(),c=document.getElementById('catFilter')?.value||'todos';return allEvents().filter(e=>(c==='todos'||e.cat===c)&&((e.full||e.title).toLowerCase().includes(q)||(e.notes||'').toLowerCase().includes(q)))}
-async function initCloud(){
-  renderLogin();
-  if(!cfg()||!window.supabase){render();return}
-  sb=window.supabase.createClient(window.JM_SUPABASE_URL,window.JM_SUPABASE_ANON_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:localStorage}});
-  const {data}=await sb.auth.getSession(); cloudUser=data.session?.user||null;
-  if(cloudUser) await loadCloudState(false);
-  sb.auth.onAuthStateChange(async(_event,session)=>{cloudUser=session?.user||null;if(cloudUser)await loadCloudState(false);else cloudState=null;renderLogin();render()});
-  renderLogin(); render();
-}
-function renderLogin(){const box=document.getElementById('loginBox'); if(!box)return; if(!cfg()){box.innerHTML='<b>Nuvem não configurada</b><span class="muted"> Coloque o mesmo config.js do sistema de controle nesta pasta.</span>';return} if(cloudUser){box.innerHTML=`<b>Controle conectado</b><span class="muted"> ${cloudUser.email||''} · o login fica salvo neste navegador.</span> <button class="btn" onclick="signOut()" style="margin-left:8px">Sair</button>`;return} box.innerHTML=`<b>Entrar para puxar os projetos do controle</b><span class="muted"> Use o mesmo e-mail e senha. Depois a sessão fica salva.</span><div class="loginInline"><input class="input" id="email" placeholder="E-mail"><input class="input" id="pass" type="password" placeholder="Senha"><button class="btn primary" onclick="signIn()">Entrar</button></div>`}
-async function signIn(){if(!sb)return alert('Supabase não configurado.');const email=document.getElementById('email').value.trim(),password=document.getElementById('pass').value;const {data,error}=await sb.auth.signInWithPassword({email,password});if(error)return alert('Erro ao entrar: '+error.message);cloudUser=data.user;await loadCloudState(true);renderLogin();render()}
-async function signOut(){if(sb)await sb.auth.signOut();cloudUser=null;cloudState=null;renderLogin();render()}
-async function loadCloudState(show){if(!sb){if(show)alert('Supabase não configurado.');return} if(!cloudUser){if(show)alert('Entre na agenda uma vez com o mesmo login do sistema de controle. Depois fica salvo.');renderLogin();return} const {data,error}=await sb.from('jm_state').select('data,updated_at').eq('user_id',cloudUser.id).maybeSingle(); if(error){alert('Erro ao puxar controle: '+error.message);return} cloudState=data?.data||{budgets:[]}; if(show)alert('Dados do controle atualizados.'); render()}
-function setView(v){view=v;document.getElementById('monthBtn').classList.toggle('active',v==='month');document.getElementById('weekBtn').classList.toggle('active',v==='week');render()}
-function changePeriod(dir){if(view==='month')cursor.setMonth(cursor.getMonth()+dir);else cursor.setDate(cursor.getDate()+dir*7);render()}
-function goToday(){cursor=new Date();cursor.setDate(1);selected=today();document.getElementById('jumpDate').value=selected;render()}
-function jumpToDate(){const v=document.getElementById('jumpDate').value;if(!v)return;selected=v;const d=parseDate(v);cursor=new Date(d);cursor.setDate(1);render()}
-function selectDay(d){selected=d;document.getElementById('jumpDate').value=d;render()}
-function toggleForm(){document.getElementById('manualForm').classList.toggle('open');document.getElementById('newDate').value=selected}
-function addManual(ev){ev.preventDefault();manualEvents.push({id:'m_'+Date.now(),title:newTitle.value,date:newDate.value,time:newTime.value,cat:newCat.value,source:'manual',notes:newNotes.value||''});saveManual();selected=newDate.value;ev.target.reset();render()}
-function chip(e,week=false){const ico=e.cat==='prazo'?'📐':e.cat==='financeiro'?'💰':e.cat==='igreja'?'⛪':e.cat==='pessoal'?'👤':'📌';return `<div class="chip c-${e.cat} ${week?'weekEvent':''}" draggable="${e.source==='manual'}" ondragstart="drag(event,'${e.id}')" title="${escapeHtml(e.full||e.title)}"><span>${ico}</span><span>${escapeHtml(e.title)}</span></div>`}
-function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function render(){renderStats(); if(view==='month')renderMonth();else renderWeek(); renderSelected(); renderAlerts(); renderAllList();}
-function renderStats(){const ev=allEvents();sToday.textContent=ev.filter(e=>e.date===today()).length;sWeek.textContent=ev.filter(e=>daysFromToday(e.date)>=0&&daysFromToday(e.date)<=7).length;sDeliveries.textContent=ev.filter(e=>e.cat==='prazo').length;sPayments.textContent=ev.filter(e=>e.cat==='financeiro').length}
-function renderMonth(){monthView.style.display='block';weekView.style.display='none';periodTitle.textContent=cursor.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});const y=cursor.getFullYear(),m=cursor.getMonth(),first=new Date(y,m,1),last=new Date(y,m+1,0),ev=filtered();monthGrid.innerHTML='';for(let i=0;i<first.getDay();i++)monthGrid.innerHTML+='<div class="day empty"></div>';for(let d=1;d<=last.getDate();d++){const dk=key(new Date(y,m,d)),items=ev.filter(e=>e.date===dk),vis=items.slice(0,2).map(e=>chip(e)).join(''),more=items.length>2?`<div class="more">+${items.length-2} eventos</div>`:'';monthGrid.innerHTML+=`<button class="day ${dk===selected?'selected':''} ${dk===today()?'today':''}" onclick="selectDay('${dk}')" ondrop="drop(event,'${dk}')" ondragover="event.preventDefault()"><div class="num">${d}</div><div class="chips">${vis}${more}</div></button>`}}
-function startWeek(d){const x=new Date(d);x.setDate(x.getDate()-x.getDay());return x}
-function renderWeek(){monthView.style.display='none';weekView.style.display='block';periodTitle.textContent=cursor.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});const start=startWeek(parseDate(selected||today()));let html='';for(let i=0;i<7;i++){const dt=new Date(start);dt.setDate(start.getDate()+i);const dk=key(dt),items=filtered().filter(e=>e.date===dk);html+=`<div class="hour">${dt.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit'})}</div><div class="slot" onclick="selectDay('${dk}')" ondrop="drop(event,'${dk}')" ondragover="event.preventDefault()">${items.map(e=>chip(e,true)).join('')||'<span class="muted" style="font-size:12px">Sem eventos</span>'}</div>`}weekRows.innerHTML=html}
-function renderSelected(){const items=filtered().filter(e=>e.date===selected);selectedTitle.textContent=fmt(selected,{weekday:'long',day:'2-digit',month:'long',year:'numeric'});selectedSub.textContent=items.length?`${items.length} item(ns) nesta data.`:'Nenhum compromisso nesta data.';selectedEvents.innerHTML=items.length?items.map(eventHtml).join(''):'<div class="emptyMsg">Nada marcado aqui.</div>'}
-function renderAlerts(){const items=allEvents().filter(e=>['prazo','financeiro'].includes(e.cat)).filter(e=>daysFromToday(e.date)<=7).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,7);alerts.innerHTML=items.length?items.map(e=>`<div class="alert">${e.cat==='prazo'?'📐':'💰'} ${escapeHtml(e.full||e.title)} · ${daysFromToday(e.date)<0?'atrasado':daysFromToday(e.date)===0?'hoje':daysFromToday(e.date)+'d'}</div>`).join(''):'<div class="emptyMsg">Sem alertas próximos.</div>'}
-function renderAllList(){const items=filtered().slice(0,80);allEvents.innerHTML=items.length?items.map(eventHtml).join(''):'<div class="emptyMsg">Nenhum evento encontrado. Entre na nuvem e clique em atualizar controle.</div>'}
-function eventHtml(e){return `<article class="event"><div class="eventTop"><div><div class="eventTitle">${escapeHtml(e.full||e.title)}</div><small>${fmt(e.date)} às ${e.time||'--:--'} · ${e.source==='portal'?'controle':'manual'}</small></div><span class="badge">${e.cat==='prazo'?'Entrega':e.cat==='financeiro'?'Pagamento':e.cat}</span></div>${e.notes?`<small>${escapeHtml(e.notes)}</small>`:''}</article>`}
-let dragged=null;function drag(ev,id){dragged=id;ev.dataTransfer.setData('text/plain',id)}function drop(ev,date){ev.preventDefault();const id=dragged||ev.dataTransfer.getData('text/plain');const item=manualEvents.find(e=>e.id===id);if(!item)return;item.date=date;saveManual();selected=date;render()}
-initCloud(); render();
+const monthFmt=new Intl.DateTimeFormat('pt-BR',{month:'long',year:'numeric'});
+const fullFmt=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+function $(id){return document.getElementById(id)}
+function iso(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function parseDate(s){if(!s)return null; const m=String(s).match(/(\d{4})-(\d{2})-(\d{2})/); if(m)return new Date(+m[1],+m[2]-1,+m[3]); const br=String(s).match(/(\d{2})\/(\d{2})\/(\d{4})/); if(br)return new Date(+br[3],+br[2]-1,+br[1]); return null}
+function dateOnly(s){const d=parseDate(s); return d?iso(d):''}
+function br(s){const d=parseDate(s);return d?d.toLocaleDateString('pt-BR'):''}
+function money(v){return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function todayIso(){return iso(new Date())}
+function daysDiff(s){const a=parseDate(todayIso()),b=parseDate(s);return b?Math.round((b-a)/86400000):0}
+function startOfWeek(d){const x=new Date(d); x.setHours(12,0,0,0); x.setDate(x.getDate()-x.getDay()); return x}
+function addDays(d,n){const x=new Date(d);x.setDate(x.getDate()+n);return x}
+function uid(){return 'ev_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
+function normStatus(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+function isProjectDone(b){const st=normStatus(b.projectStatus||b.status);return st.includes('concluido')||st.includes('cancelado')||st.includes('perdido')}
+function isProjectClosed(b){return normStatus(b.status).includes('fechado') || b.projectStatus}
+function projectName(b){return Array.isArray(b.projetos)?b.projetos.join(', '):(b.projeto||b.tipo||'Projeto')}
+function paymentSum(b){const arr=Array.isArray(b.payments)?b.payments:[];let sum=arr.reduce((acc,p)=>acc+(Number(p.value??p.valor??p.amount??p.total??0)||0),0);return Math.max(Number(b.received)||0,sum)}
+function budgetTotal(b){return Number(b.negociado||b.final||b.total||b.valor||b.price||0)||0}
+function paymentDone(b){const paid=paymentSum(b), total=budgetTotal(b); if(total>0) return paid>=total-0.01; return paid>0 || normStatus(b.financeStatus).includes('pago') || normStatus(b.paymentStatus).includes('pago')}
+function recurrenceDates(ev){if(!ev.repeat||ev.repeat==='none')return [ev.date]; const dates=[]; const base=parseDate(ev.date); if(!base)return dates; const start=new Date(current.getFullYear()-1,0,1), end=new Date(current.getFullYear()+2,11,31); let d=new Date(base); while(d<start){ if(ev.repeat==='monthly')d.setMonth(d.getMonth()+1); else d.setFullYear(d.getFullYear()+1); } for(let i=0;i<80&&d<=end;i++){dates.push(iso(d)); if(ev.repeat==='monthly')d=new Date(d.getFullYear(),d.getMonth()+1,base.getDate()); else d=new Date(d.getFullYear()+1,base.getMonth(),base.getDate()); } return dates}
+function getEvents(){const events=[]; (portalState.budgets||[]).forEach(b=>{ if(!b || !isProjectClosed(b)) return; const cliente=b.cliente||'Cliente'; const proj=projectName(b); const entrega=dateOnly(b.entrega); if(entrega){ const done=isProjectDone(b); events.push({id:'del_'+b.id,title:'Entrega · '+cliente,kind:'prazo',icon:'📐',date:entrega,time:'09:00',source:'portal',status:done?'done':(daysDiff(entrega)<0?'overdue':'pending'),details:{Cliente:cliente,Projeto:proj,Status:b.projectStatus||b.status||'Ativo',Entrega:br(entrega),Origem:'Sistema de controle'}}); }
+ const due=dateOnly(b.paymentDue); if(due){ const done=paymentDone(b); const paid=paymentSum(b), total=budgetTotal(b); events.push({id:'pay_'+b.id,title:'Pagamento · '+cliente,kind:'financeiro',icon:'💰',date:due,time:'10:00',source:'portal',status:done?'done':(daysDiff(due)<0?'overdue':'pending'),details:{Cliente:cliente,Projeto:proj,Vencimento:br(due),'Recebido':money(paid),'Valor combinado': total?money(total):'—',Situação:done?'Recebido/quitado':'Pendente',Origem:'Sistema de controle'}}); }
+ }); manualEvents.forEach(m=>{recurrenceDates(m).forEach(dt=>events.push({...m,date:dt,kind:'manual',icon:'📅',source:'manual',status:'pending',details:{Categoria:m.catLabel||'Manual',Data:br(dt),Repetição:m.repeat==='monthly'?'Todo mês':m.repeat==='yearly'?'Todo ano':'Não repetir'}}))}); return events.sort((a,b)=>(a.date+' '+(a.time||'')).localeCompare(b.date+' '+(b.time||'')))}
+function render(){renderCloud();renderStats();renderCalendar();renderDay();renderAlerts();renderAllEvents()}
+function renderCloud(){ $('cloudStatus').textContent=cloudUser?'Conectado':'Não conectado'; $('cloudLast').textContent=localStorage.getItem('agenda_jm_last')||'—'; $('cloudCount').textContent=(portalState.budgets||[]).length; $('loginToggle').textContent=cloudUser?'Sair':'Entrar';}
+function renderStats(){const ev=getEvents(),today=todayIso();$('stToday').textContent=ev.filter(e=>e.date===today).length;$('stPending').textContent=ev.filter(e=>e.status==='pending').length;$('stOverdue').textContent=ev.filter(e=>e.status==='overdue').length;$('stDone').textContent=ev.filter(e=>e.status==='done').length}
+function renderCalendar(){const cal=$('calendar');cal.innerHTML='';cal.className=view==='week'?'calendar-week':'calendar-month';$('tabMonth').classList.toggle('active',view==='month');$('tabWeek').classList.toggle('active',view==='week'); const ev=getEvents(); if(view==='month'){ $('calTitle').textContent=cap(monthFmt.format(current)); const first=new Date(current.getFullYear(),current.getMonth(),1), last=new Date(current.getFullYear(),current.getMonth()+1,0); for(let i=0;i<first.getDay();i++){const x=document.createElement('div');x.className='day empty';cal.appendChild(x)} for(let d=1;d<=last.getDate();d++){const date=new Date(current.getFullYear(),current.getMonth(),d);cal.appendChild(dayEl(date,ev.filter(e=>e.date===iso(date)),false))}} else {const end=addDays(weekBase,6);$('calTitle').textContent=cap(monthFmt.format(weekBase))+(weekBase.getMonth()!==end.getMonth()?' / '+cap(monthFmt.format(end)):''); for(let i=0;i<7;i++){const date=addDays(weekBase,i);cal.appendChild(dayEl(date,ev.filter(e=>e.date===iso(date)),true))}}}
+function dayEl(date,dayEvents,isWeek){const key=iso(date);const b=document.createElement('button');b.type='button';b.className='day';if(key===selected)b.classList.add('selected');if(key===todayIso())b.classList.add('today');b.onclick=()=>selectDay(key);let html=(isWeek?'<div class="week-date">'+date.toLocaleDateString('pt-BR',{weekday:'short'})+'</div>':'')+'<span class="num">'+date.getDate()+'</span>';dayEvents.slice(0,isWeek?8:3).forEach(e=>{html+='<div class="mini '+e.kind+'" title="'+esc(e.title)+'"><b>'+e.icon+'</b><span>'+esc(shortTitle(e))+'</span></div>'}); if(dayEvents.length>(isWeek?8:3)) html+='<div class="more">+'+(dayEvents.length-(isWeek?8:3))+' eventos</div>'; b.innerHTML=html; return b}
+function shortTitle(e){return e.title.replace('Entrega ·','Entrega').replace('Pagamento ·','Pagamento')}
+function renderDay(){const d=parseDate(selected)||new Date();$('dayName').textContent=d.toLocaleDateString('pt-BR',{weekday:'long'});$('dayFull').textContent=d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'}); const day=getEvents().filter(e=>e.date===selected);$('dayEvents').innerHTML=day.length?day.map(eventHtml).join(''):'<div class="empty-state">Nenhum compromisso nesta data.</div>'}
+function renderAlerts(){const a=getEvents().filter(e=>e.status==='overdue'||(e.status==='pending'&&daysDiff(e.date)>=0&&daysDiff(e.date)<=7)).slice(0,8);$('alerts').innerHTML=a.length?a.map(eventHtml).join(''):'<div class="empty-state">Sem alertas por enquanto.</div>'}
+function renderAllEvents(){let ev=getEvents(); if(listFilter!=='all')ev=ev.filter(e=>e.status===listFilter); $('allEvents').innerHTML=ev.length?ev.map(eventHtml).join(''):'<div class="empty-state">Nada nesse filtro.</div>'; document.querySelectorAll('.filters button').forEach(b=>b.classList.toggle('active',b.dataset.filter===listFilter))}
+function eventHtml(e){return `<article class="event clickable" onclick="openEvent('${e.id.replace(/'/g,'')}')"><div class="event-top"><div><div class="event-title">${e.icon} ${esc(e.title)}</div><div class="muted">${br(e.date)} ${e.time?('às '+e.time):''}</div></div><span class="pill ${e.status}">${labelStatus(e.status)}</span></div><div><span class="pill ${e.kind}">${e.kind==='financeiro'?'Financeiro':e.kind==='prazo'?'Prazo':'Manual'}</span> <span class="pill portal">${e.source==='portal'?'Controle':'Manual'}</span></div></article>`}
+function openEvent(id){const e=getEvents().find(x=>x.id===id); if(!e)return; selected=e.date; const d=parseDate(e.date); if(d){current=new Date(d.getFullYear(),d.getMonth(),1); weekBase=startOfWeek(d)} render(); $('modalTitle').textContent=e.icon+' '+e.title; $('modalSub').textContent=br(e.date)+(e.time?' às '+e.time:''); $('modalPill').className='pill '+e.status; $('modalPill').textContent=labelStatus(e.status); const det=e.details||{}; $('modalDetails').innerHTML=Object.keys(det).map(k=>`<div class="detail"><small>${esc(k)}</small><b>${esc(det[k])}</b></div>`).join(''); $('modal').classList.add('show')}
+function closeModal(){$('modal').classList.remove('show')}
+function selectDay(k){selected=k;const d=parseDate(k); if(d){current=new Date(d.getFullYear(),d.getMonth(),1);weekBase=startOfWeek(d)} render(); document.getElementById('dayPanel').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function movePeriod(n){if(view==='month'){current.setMonth(current.getMonth()+n);selected=iso(new Date(current.getFullYear(),current.getMonth(),1));weekBase=startOfWeek(parseDate(selected))}else{weekBase=addDays(weekBase,n*7);selected=iso(weekBase);current=new Date(weekBase.getFullYear(),weekBase.getMonth(),1)}render()}
+function setView(v){view=v;if(v==='week')weekBase=startOfWeek(parseDate(selected)||new Date());render()}
+function goToday(){selected=todayIso();const d=new Date();current=new Date(d.getFullYear(),d.getMonth(),1);weekBase=startOfWeek(d);render()}
+function jumpToDate(){const v=$('jumpDate').value;if(!v)return;selectDay(v)}
+function setListFilter(f){listFilter=f;renderAllEvents()}
+function addManual(ev){ev.preventDefault();manualEvents.push({id:uid(),title:$('mTitle').value.trim(),date:$('mDate').value,time:$('mTime').value,repeat:$('mRepeat').value,kind:'manual',catLabel:$('mCat').selectedOptions[0].textContent});saveManual();selected=$('mDate').value;ev.target.reset();$('mTime').value='09:00';render()}
+function loadManual(){try{return JSON.parse(localStorage.getItem('agenda_jm_manual')||'[]')}catch(e){return[]}}
+function saveManual(){localStorage.setItem('agenda_jm_manual',JSON.stringify(manualEvents))}
+function toggleLogin(){ if(cloudUser){signOut();return} $('loginBox').classList.toggle('show')}
+async function initCloud(){try{ if(!window.JM_SUPABASE_URL||!window.JM_SUPABASE_ANON_KEY||!window.supabase){$('cloudStatus').textContent='Config ausente';return} sb=window.supabase.createClient(window.JM_SUPABASE_URL,window.JM_SUPABASE_ANON_KEY); const {data}=await sb.auth.getSession(); cloudUser=data.session?.user||null; sb.auth.onAuthStateChange((_e,session)=>{cloudUser=session?.user||null;if(cloudUser)loadCloud(false);render()}); if(cloudUser) await loadCloud(false); else loadLocalPortal(); render()}catch(e){console.error(e);$('cloudStatus').textContent='Erro'}}
+function loadLocalPortal(){try{const raw=localStorage.getItem('jm_state')||localStorage.getItem('jm_v15_online_backup')||localStorage.getItem('jm_v14_estavel'); if(raw) portalState=normalizeState(JSON.parse(raw));}catch(e){}}
+async function signIn(){try{if(!sb)return alert('Supabase/config.js não carregou.'); const email=$('email').value.trim(), password=$('pass').value; const {data,error}=await sb.auth.signInWithPassword({email,password}); if(error)throw error; cloudUser=data.user; $('loginBox').classList.remove('show'); await loadCloud(true)}catch(e){alert('Erro ao entrar: '+e.message)}}
+async function signOut(){if(sb)await sb.auth.signOut();cloudUser=null;portalState={budgets:[],tasks:[]};render()}
+async function loadCloud(showMsg){try{if(!sb||!cloudUser){loadLocalPortal();render();return} const {data,error}=await sb.from('jm_state').select('data,updated_at').eq('user_id',cloudUser.id).maybeSingle(); if(error)throw error; if(data&&data.data){portalState=normalizeState(data.data); localStorage.setItem('agenda_jm_last',new Date().toLocaleString('pt-BR'));} if(showMsg)alert('Agenda atualizada.'); render()}catch(e){alert('Erro ao carregar nuvem: '+e.message);render()}}
+function normalizeState(s){s=s||{};s.budgets=Array.isArray(s.budgets)?s.budgets:[];s.tasks=Array.isArray(s.tasks)?s.tasks:[];s.budgets.forEach(b=>{if(!Array.isArray(b.projetos))b.projetos=b.projetos?[String(b.projetos)]:[];if(!Array.isArray(b.payments))b.payments=[];b.received=Number(b.received)||0});return s}
+function labelStatus(s){return s==='done'?'Concluído':s==='overdue'?'Atrasado':'Pendente'}
+function cap(s){return String(s||'').replace(/^./,c=>c.toUpperCase())}
+function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+$('jumpDate').value=selected;$('mDate').value=selected;render();initCloud();
 </script>
 </body>
 </html>
