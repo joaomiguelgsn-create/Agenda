@@ -4,448 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agenda JM</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    :root {
-      --bg: #f4f7fb;
-      --panel: rgba(255,255,255,.82);
-      --panel-solid: #ffffff;
-      --text: #111827;
-      --muted: #64748b;
-      --line: #e5e7eb;
-      --shadow: 0 18px 45px rgba(15,23,42,.08);
-      --shadow-soft: 0 8px 24px rgba(15,23,42,.06);
-      --dark: #111827;
-      --blue-bg: #dbeafe; --blue: #1d4ed8;
-      --green-bg: #dcfce7; --green: #15803d;
-      --orange-bg: #ffedd5; --orange: #c2410c;
-      --red-bg: #fee2e2; --red: #b91c1c;
-      --purple-bg: #ede9fe; --purple: #6d28d9;
+    :root{
+      --bg:#f6f8fc;--card:#ffffff;--card2:#f9fbff;--text:#101828;--muted:#667085;--line:#e4e7ec;--strong:#111827;
+      --shadow:0 18px 50px rgba(16,24,40,.08);--soft-shadow:0 8px 22px rgba(16,24,40,.05);
+      --blue-bg:#e8f1ff;--blue:#155eef;--green-bg:#e8f8ef;--green:#067647;--orange-bg:#fff1e7;--orange:#c4320a;
+      --red-bg:#ffe9e9;--red:#b42318;--purple-bg:#f1e9ff;--purple:#6941c6;--yellow-bg:#fff7d6;--yellow:#a15c07;
     }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Inter, Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(37,99,235,.13), transparent 34%),
-        radial-gradient(circle at top right, rgba(124,58,237,.12), transparent 32%),
-        linear-gradient(180deg, #f8fafc 0%, var(--bg) 100%);
+    body.dark{
+      --bg:#0b1220;--card:#111827;--card2:#172033;--text:#f8fafc;--muted:#98a2b3;--line:#283548;--strong:#f8fafc;
+      --shadow:0 18px 50px rgba(0,0,0,.35);--soft-shadow:0 8px 22px rgba(0,0,0,.22);
+      --blue-bg:#14284a;--blue:#93c5fd;--green-bg:#102f24;--green:#86efac;--orange-bg:#3a2414;--orange:#fdba74;
+      --red-bg:#3a1717;--red:#fca5a5;--purple-bg:#271a40;--purple:#c4b5fd;--yellow-bg:#34290d;--yellow:#fde68a;
     }
-
-    button, input, select, textarea { font: inherit; }
-
-    .app { max-width: 1200px; margin: 0 auto; padding: 28px 18px 64px; }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 18px;
-      padding: 26px;
-      border: 1px solid rgba(255,255,255,.65);
-      border-radius: 30px;
-      background: var(--panel);
-      backdrop-filter: blur(14px);
-      box-shadow: var(--shadow);
-    }
-
-    .eyebrow {
-      margin: 0 0 8px;
-      color: var(--muted);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: .18em;
-      font-weight: 800;
-    }
-
-    h1, h2, h3, p { margin-top: 0; }
-    h1 { margin-bottom: 8px; font-size: clamp(32px, 5vw, 52px); letter-spacing: -.06em; line-height: .95; }
-    .subtitle { margin: 0; color: var(--muted); line-height: 1.6; max-width: 680px; }
-
-    .btn {
-      border: 0;
-      background: var(--dark);
-      color: white;
-      border-radius: 16px;
-      padding: 13px 17px;
-      cursor: pointer;
-      font-weight: 800;
-      box-shadow: var(--shadow-soft);
-      transition: transform .15s ease, opacity .15s ease;
-    }
-    .btn:hover { transform: translateY(-1px); }
-    .btn.secondary { background: white; color: var(--text); border: 1px solid var(--line); box-shadow: none; }
-    .btn.small { padding: 9px 12px; border-radius: 12px; font-size: 16px; }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin: 20px 0;
-    }
-
-    .card {
-      border: 1px solid rgba(226,232,240,.9);
-      border-radius: 26px;
-      background: var(--panel-solid);
-      box-shadow: var(--shadow-soft);
-      padding: 20px;
-    }
-
-    .stat-card { position: relative; overflow: hidden; }
-    .stat-card:after {
-      content: "";
-      position: absolute;
-      width: 86px; height: 86px;
-      border-radius: 999px;
-      right: -30px; top: -30px;
-      background: rgba(37,99,235,.08);
-    }
-    .stat-label { color: var(--muted); font-size: 14px; margin-bottom: 10px; }
-    .stat-number { font-size: 34px; font-weight: 900; margin-bottom: 4px; letter-spacing: -.04em; }
-    .muted { color: var(--muted); }
-
-    .main-grid { display: grid; grid-template-columns: 1.36fr .84fr; gap: 18px; align-items: start; }
-    .bottom-grid { display: grid; grid-template-columns: .75fr 1.25fr; gap: 18px; margin-top: 18px; align-items: start; }
-
-    .section-head { display: flex; justify-content: space-between; gap: 14px; align-items: center; margin-bottom: 18px; }
-    .section-title { margin: 0; font-size: 22px; letter-spacing: -.03em; }
-    .month-name { text-transform: capitalize; }
-
-    .weekdays, .calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
-    .weekdays div { color: var(--muted); font-size: 12px; font-weight: 900; text-align: center; padding-bottom: 8px; }
-
-    .day {
-      min-height: 96px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 9px;
-      cursor: pointer;
-      background: linear-gradient(180deg, #fff 0%, #fbfdff 100%);
-      text-align: left;
-      overflow: hidden;
-      transition: border .15s ease, transform .15s ease, box-shadow .15s ease;
-    }
-    .day:hover { border-color: #94a3b8; transform: translateY(-1px); box-shadow: var(--shadow-soft); }
-    .day.empty { background: rgba(248,250,252,.6); cursor: default; box-shadow: none; transform: none; }
-    .day.selected { outline: 2px solid var(--dark); outline-offset: 2px; }
-    .day.today { background: linear-gradient(180deg, #eff6ff 0%, #fff 100%); }
-    .day-number { font-weight: 900; font-size: 13px; margin-bottom: 7px; }
-
-    .mini-event {
-      display: block;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      max-width: 100%;
-      border-radius: 999px;
-      padding: 4px 7px;
-      font-size: 10px;
-      line-height: 1.15;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .more-events {
-      display: inline-block;
-      margin-top: 1px;
-      color: var(--muted);
-      font-size: 10px;
-      font-weight: 800;
-    }
-
-    .jm { background: var(--blue-bg); color: var(--blue); }
-    .igreja { background: var(--green-bg); color: var(--green); }
-    .pessoal { background: var(--orange-bg); color: var(--orange); }
-    .prazo { background: var(--red-bg); color: var(--red); }
-    .financeiro { background: var(--purple-bg); color: var(--purple); }
-
-    .event-list { display: grid; gap: 10px; margin-top: 14px; }
-    .event-item { border: 1px solid var(--line); border-radius: 20px; padding: 15px; background: #fff; }
-    .event-top { display: flex; justify-content: space-between; gap: 12px; align-items: start; margin-bottom: 8px; }
-    .event-title { font-weight: 900; line-height: 1.3; }
-    .event-date { font-size: 14px; color: var(--muted); margin-top: 4px; }
-    .badge { display: inline-flex; white-space: nowrap; border-radius: 999px; padding: 6px 10px; font-size: 11px; font-weight: 900; background: #f8fafc; color: var(--muted); border: 1px solid var(--line); }
-
-    .filters { display: grid; gap: 10px; margin-top: 14px; }
-    input, select, textarea {
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 13px 14px;
-      outline: none;
-      background: #fff;
-      width: 100%;
-    }
-    input:focus, select:focus, textarea:focus { border-color: #94a3b8; box-shadow: 0 0 0 4px rgba(148,163,184,.14); }
-    textarea { min-height: 88px; resize: vertical; }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .form-grid { display: grid; gap: 10px; margin-top: 14px; }
-
-    .empty-state { padding: 18px; border: 1px dashed #cbd5e1; border-radius: 18px; text-align: center; color: var(--muted); background: #f8fafc; }
-
-    @media (max-width: 930px) {
-      .hero, .main-grid, .bottom-grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 620px) {
-      .app { padding: 14px 10px 50px; }
-      .hero, .card { border-radius: 22px; padding: 16px; }
-      .stats { grid-template-columns: 1fr; }
-      .weekdays, .calendar { gap: 4px; }
-      .day { min-height: 62px; border-radius: 14px; padding: 7px; }
-      .mini-event { display: none; }
-      .two { grid-template-columns: 1fr; }
-    }
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Inter,Arial,Helvetica,sans-serif;background:radial-gradient(circle at top left,rgba(21,94,239,.13),transparent 31%),linear-gradient(180deg,#fff 0%,var(--bg) 38%);color:var(--text)}
+    body.dark{background:radial-gradient(circle at top left,rgba(59,130,246,.18),transparent 32%),linear-gradient(180deg,#0f172a 0%,var(--bg) 48%)}
+    button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1240px;margin:0 auto;padding:24px 16px 54px}
+    .hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;background:rgba(255,255,255,.82);border:1px solid rgba(228,231,236,.9);box-shadow:var(--shadow);border-radius:30px;padding:24px;backdrop-filter:blur(14px)}
+    body.dark .hero{background:rgba(17,24,39,.82);border-color:var(--line)}.eyebrow{margin:0 0 8px;color:var(--muted);font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:900}.hero h1{margin:0 0 8px;font-size:clamp(32px,5vw,50px);letter-spacing:-.06em;line-height:.96}.subtitle{margin:0;color:var(--muted);line-height:1.55;max-width:720px}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}.btn{border:0;border-radius:16px;padding:12px 16px;background:var(--strong);color:var(--bg);font-weight:900;box-shadow:var(--soft-shadow);transition:.16s}.btn:hover{transform:translateY(-1px)}.btn.secondary{background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:none}.btn.small{padding:9px 11px;border-radius:13px;font-size:14px}.btn.active{background:var(--blue);color:#fff;border-color:transparent}
+    .toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:18px 0}.view-switch{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.card{background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:var(--soft-shadow);padding:18px}.stat-label{margin:0 0 8px;color:var(--muted);font-size:14px}.stat-number{font-size:32px;font-weight:950;letter-spacing:-.04em}.muted{color:var(--muted)}
+    .layout{display:grid;grid-template-columns:1.38fr .82fr;gap:16px;align-items:start}.section-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:14px}.section-title{margin:0;font-size:22px;letter-spacing:-.03em}.month-name{text-transform:capitalize}.weekdays,.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.weekdays div{text-align:center;color:var(--muted);font-size:12px;font-weight:950;padding-bottom:8px}.day{min-height:104px;border:1px solid var(--line);border-radius:18px;padding:9px;background:linear-gradient(180deg,var(--card) 0%,var(--card2) 100%);text-align:left;overflow:hidden;transition:.14s}.day:not(.empty):hover{border-color:#98a2b3;transform:translateY(-1px)}.day.empty{opacity:.45;cursor:default}.day.selected{outline:2px solid var(--strong);outline-offset:2px}.day.today{background:linear-gradient(180deg,var(--blue-bg) 0%,var(--card) 100%)}.day.drag-over{outline:2px dashed var(--blue);outline-offset:-5px}.day-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}.day-number{font-weight:950;font-size:13px}.day-count{font-size:10px;font-weight:950;color:var(--muted)}
+    .mini-event{display:flex;align-items:center;gap:5px;width:100%;max-width:100%;border-radius:999px;padding:4px 7px;font-size:10px;line-height:1.1;font-weight:900;margin-bottom:4px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.mini-event span:last-child{overflow:hidden;text-overflow:ellipsis}.more-events{display:inline-block;margin-top:1px;color:var(--muted);font-size:10px;font-weight:950}.jm{background:var(--blue-bg);color:var(--blue)}.igreja{background:var(--green-bg);color:var(--green)}.pessoal{background:var(--orange-bg);color:var(--orange)}.prazo{background:var(--red-bg);color:var(--red)}.financeiro{background:var(--purple-bg);color:var(--purple)}.aviso{background:var(--yellow-bg);color:var(--yellow)}
+    .week-view{display:none;grid-template-columns:86px repeat(7,minmax(0,1fr));gap:8px}.week-view.active{display:grid}.week-col,.time-col{border:1px solid var(--line);border-radius:18px;background:var(--card2);min-height:520px;padding:10px}.time-col{background:transparent;border-color:transparent;color:var(--muted);font-size:12px}.week-date{font-weight:950;margin-bottom:10px}.week-event{border-radius:14px;padding:9px;margin-bottom:8px;font-size:12px;font-weight:850;line-height:1.25;cursor:grab}.week-event small{display:block;margin-top:3px;opacity:.75}
+    .event-list{display:grid;gap:10px;margin-top:12px}.event-item{border:1px solid var(--line);border-radius:20px;padding:14px;background:var(--card)}.event-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.event-title{font-weight:950;line-height:1.3}.event-meta{font-size:14px;color:var(--muted);margin-top:5px}.badge{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:950;background:var(--card2);color:var(--muted);border:1px solid var(--line)}.source{margin-top:8px;font-size:12px;color:var(--muted)}
+    .notice{border-radius:20px;padding:14px;background:var(--yellow-bg);color:var(--yellow);font-weight:850;line-height:1.45;margin-bottom:14px}.notice.hidden{display:none}.filters{display:grid;grid-template-columns:1.2fr .8fr;gap:10px;margin-top:14px}input,select,textarea{border:1px solid var(--line);border-radius:16px;padding:13px 14px;background:var(--card);color:var(--text);outline:none;width:100%}input:focus,select:focus,textarea:focus{border-color:#98a2b3;box-shadow:0 0 0 4px rgba(152,162,179,.14)}textarea{min-height:82px;resize:vertical}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.form-grid{display:grid;gap:10px;margin-top:12px}.empty-state{padding:18px;border:1px dashed var(--line);border-radius:18px;text-align:center;color:var(--muted);background:var(--card2)}.bottom{display:grid;grid-template-columns:.78fr 1.22fr;gap:16px;margin-top:16px;align-items:start}.help{font-size:13px;color:var(--muted);line-height:1.5;margin:10px 0 0}
+    @media(max-width:950px){.hero,.layout,.bottom{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.toolbar{align-items:flex-start;flex-direction:column}.hero-actions{justify-content:flex-start}.week-view{grid-template-columns:1fr}.time-col{display:none}}
+    @media(max-width:650px){.app{padding:12px 9px 44px}.hero,.card{border-radius:22px;padding:15px}.stats{grid-template-columns:1fr}.weekdays,.calendar{gap:4px}.day{min-height:72px;border-radius:14px;padding:7px}.mini-event{display:none}.two,.filters{grid-template-columns:1fr}.hero h1{font-size:34px}}
   </style>
 </head>
 <body>
   <main class="app">
     <header class="hero">
-      <div>
-        <p class="eyebrow">Organização pessoal e profissional</p>
-        <h1>Agenda JM</h1>
-        <p class="subtitle">Marque compromissos, acompanhe reuniões e veja automaticamente prazos de entrega e pagamentos vindos do portal.</p>
-      </div>
-      <button class="btn" onclick="focusForm()">+ Novo compromisso</button>
+      <div><p class="eyebrow">Organização pessoal e profissional</p><h1>Agenda JM</h1><p class="subtitle">Compromissos manuais, prazos de entrega e datas de pagamento puxadas do portal.</p></div>
+      <div class="hero-actions"><button class="btn secondary" onclick="toggleTheme()" id="themeBtn">🌙 Tema escuro</button><button class="btn" onclick="focusForm()">+ Novo compromisso</button></div>
     </header>
-
-    <section class="stats">
-      <div class="card stat-card"><p class="stat-label">Hoje</p><div class="stat-number" id="statToday">0</div><p class="muted">compromissos</p></div>
-      <div class="card stat-card"><p class="stat-label">Próximos 7 dias</p><div class="stat-number" id="statWeek">0</div><p class="muted">eventos e prazos</p></div>
-      <div class="card stat-card"><p class="stat-label">Entregas</p><div class="stat-number" id="statDeadlines">0</div><p class="muted">prazos do portal</p></div>
-      <div class="card stat-card"><p class="stat-label">Pagamentos</p><div class="stat-number" id="statPayments">0</div><p class="muted">cobranças previstas</p></div>
-    </section>
-
-    <section class="main-grid">
-      <div class="card">
-        <div class="section-head">
-          <button class="btn secondary small" onclick="changeMonth(-1)">‹</button>
-          <h2 class="section-title month-name" id="monthTitle">Mês</h2>
-          <button class="btn secondary small" onclick="changeMonth(1)">›</button>
-        </div>
-        <div class="weekdays"><div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div>
-        <div class="calendar" id="calendar"></div>
-      </div>
-
-      <aside class="card">
-        <h2 class="section-title" id="selectedTitle">Selecione uma data</h2>
-        <p class="muted" id="selectedSubtitle">Clique em um dia do calendário.</p>
-        <div class="event-list" id="selectedEvents"></div>
-      </aside>
-    </section>
-
-    <section class="bottom-grid">
-      <div class="card" id="formCard">
-        <h2 class="section-title">Novo compromisso</h2>
-        <p class="muted">Aqui entram os compromissos cadastrados por você.</p>
-        <form class="form-grid" onsubmit="addManualEvent(event)">
-          <input id="newTitle" required placeholder="Título do compromisso" />
-          <div class="two">
-            <input id="newDate" required type="date" />
-            <input id="newTime" required type="time" />
-          </div>
-          <select id="newCategory">
-            <option value="jm">JM Neto</option>
-            <option value="igreja">Igreja</option>
-            <option value="pessoal">Pessoal</option>
-            <option value="prazo">Prazo</option>
-            <option value="financeiro">Financeiro</option>
-          </select>
-          <textarea id="newNotes" placeholder="Observações"></textarea>
-          <button class="btn" type="submit">Salvar compromisso</button>
-        </form>
-
-        <div class="filters">
-          <input id="searchInput" oninput="renderAll()" placeholder="Buscar compromisso..." />
-          <select id="categoryFilter" onchange="renderAll()">
-            <option value="todos">Todas as categorias</option>
-            <option value="jm">JM Neto</option>
-            <option value="igreja">Igreja</option>
-            <option value="pessoal">Pessoal</option>
-            <option value="prazo">Prazo</option>
-            <option value="financeiro">Financeiro</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2 class="section-title">Próximos compromissos</h2>
-        <p class="muted">Lista geral, incluindo eventos automáticos do portal.</p>
-        <div class="event-list" id="allEvents"></div>
-      </div>
-    </section>
+    <section class="stats"><div class="card"><p class="stat-label">Hoje</p><div class="stat-number" id="statToday">0</div><p class="muted">compromissos</p></div><div class="card"><p class="stat-label">Próximos 7 dias</p><div class="stat-number" id="statWeek">0</div><p class="muted">eventos e prazos</p></div><div class="card"><p class="stat-label">Entregas</p><div class="stat-number" id="statDeadlines">0</div><p class="muted">do portal</p></div><div class="card"><p class="stat-label">Pagamentos</p><div class="stat-number" id="statPayments">0</div><p class="muted">do portal</p></div></section>
+    <div class="toolbar"><div class="view-switch"><button class="btn secondary small" onclick="goToday()">Hoje</button><button class="btn small active" id="monthBtn" onclick="setView('month')">Mês</button><button class="btn secondary small" id="weekBtn" onclick="setView('week')">Semana</button></div><div class="view-switch"><button class="btn secondary small" onclick="changePeriod(-1)">‹ Anterior</button><button class="btn secondary small" onclick="changePeriod(1)">Próximo ›</button></div></div>
+    <section class="layout"><div class="card"><div class="section-head"><h2 class="section-title month-name" id="periodTitle">Agenda</h2><span class="badge" id="syncBadge">offline</span></div><div id="monthArea"><div class="weekdays"><div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div></div><div class="calendar" id="calendar"></div></div><div class="week-view" id="weekView"></div></div><aside class="card"><div class="notice hidden" id="noticeBox"></div><h2 class="section-title" id="selectedTitle">Selecione uma data</h2><p class="muted" id="selectedSubtitle">Clique em um dia para ver os compromissos.</p><div class="event-list" id="selectedEvents"></div></aside></section>
+    <section class="bottom"><div class="card" id="formCard"><h2 class="section-title">Novo compromisso</h2><p class="help">Use para reuniões, igreja, pessoal ou algo da JM Neto. Entregas e pagamentos vêm automaticamente do portal.</p><form class="form-grid" onsubmit="addManualEvent(event)"><input id="newTitle" required placeholder="Título do compromisso"/><div class="two"><input id="newDate" required type="date"/><input id="newTime" required type="time"/></div><select id="newCategory"><option value="jm">JM Neto</option><option value="pessoal">Pessoal</option><option value="igreja">Igreja</option><option value="prazo">Prazo manual</option><option value="financeiro">Financeiro manual</option></select><textarea id="newNotes" placeholder="Observações"></textarea><button class="btn" type="submit">Salvar compromisso</button></form></div><div class="card"><div class="section-head"><div><h2 class="section-title">Lista geral</h2><p class="help">Arraste compromissos manuais para mudar a data. Eventos do portal não são alterados aqui.</p></div></div><div class="filters"><input id="searchInput" oninput="renderAll()" placeholder="Buscar..."/><select id="categoryFilter" onchange="renderAll()"><option value="todos">Todas as categorias</option><option value="jm">JM Neto</option><option value="pessoal">Pessoal</option><option value="igreja">Igreja</option><option value="prazo">Prazos</option><option value="financeiro">Financeiro</option></select></div><div class="event-list" id="allEvents"></div></div></section>
   </main>
+<script>
+const CONFIG={
+  supabaseUrl:"", // cole aqui a URL do Supabase do portal
+  supabaseAnonKey:"", // cole aqui a anon key do Supabase do portal
+  projectsTable:"projects", // ajuste para o nome real da tabela
+  paymentsTable:"payments", // ajuste se pagamentos estiverem em tabela separada
+  columns:{client:"client",project:"project",deliveryDate:"delivery_date",paymentDate:"payment_date",amount:"amount",status:"status"}
+};
+const ICONS={jm:"💼",pessoal:"👤",igreja:"⛪",prazo:"📐",financeiro:"💰",aviso:"⚠️"};
+const LABELS={jm:"JM Neto",pessoal:"Pessoal",igreja:"Igreja",prazo:"Prazo",financeiro:"Financeiro"};
+let manualEvents=JSON.parse(localStorage.getItem("agendaJM.manualEvents")||"[]");
+let portalProjects=[];let portalPayments=[];let currentDate=new Date();currentDate.setDate(1);let selectedDate=toDateKey(new Date());let currentView="month";
+if(localStorage.getItem("agendaJM.theme")==="dark")document.body.classList.add("dark");updateThemeButton();
 
-  <script>
-    const projectsFromPortal = [
-      { client: "Cliente A", project: "Projeto arquitetônico", deliveryDate: "2026-06-05", paymentDate: "2026-06-10", amount: 850 },
-      { client: "Cliente B", project: "Projeto elétrico", deliveryDate: "2026-06-12", paymentDate: "2026-06-14", amount: 450 }
-    ];
-
-    let manualEvents = JSON.parse(localStorage.getItem("agendaJM_manualEvents") || "[]");
-    if (!manualEvents.length) {
-      manualEvents = [
-        { id: randomId(), title: "Reunião com cliente", date: nextDate(2), time: "14:30", category: "jm", source: "manual", notes: "Alinhar escopo, prazo e orçamento." },
-        { id: randomId(), title: "Compromisso pessoal", date: nextDate(4), time: "18:00", category: "pessoal", source: "manual", notes: "Exemplo editável." }
-      ];
-      saveManualEvents();
-    }
-
-    let currentDate = new Date();
-    currentDate.setDate(1);
-    let selectedDate = toDateKey(new Date());
-
-    function portalEvents() {
-      return projectsFromPortal.flatMap((p, index) => [
-        { id: `delivery-${index}`, title: `Entregar ${p.project} — ${p.client}`, date: p.deliveryDate, time: "09:00", category: "prazo", source: "portal", notes: "Gerado automaticamente pelo portal." },
-        { id: `payment-${index}`, title: `Receber pagamento — ${p.client}`, date: p.paymentDate, time: "10:00", category: "financeiro", source: "portal", notes: `Valor previsto: ${money(p.amount)}.` }
-      ]);
-    }
-
-    function allEventsRaw() {
-      return [...manualEvents, ...portalEvents()].sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-    }
-
-    function filteredEvents() {
-      const search = document.getElementById("searchInput")?.value?.toLowerCase() || "";
-      const category = document.getElementById("categoryFilter")?.value || "todos";
-      return allEventsRaw().filter(e => {
-        const matchText = e.title.toLowerCase().includes(search) || (e.notes || "").toLowerCase().includes(search);
-        const matchCategory = category === "todos" || e.category === category;
-        return matchText && matchCategory;
-      });
-    }
-
-    function renderCalendar() {
-      const calendar = document.getElementById("calendar");
-      const monthTitle = document.getElementById("monthTitle");
-      calendar.innerHTML = "";
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      monthTitle.textContent = currentDate.toLocaleDateString("pt-BR", { month: "long", year: "numeric" });
-      const firstDay = new Date(year, month, 1);
-      const lastDay = new Date(year, month + 1, 0);
-      const events = filteredEvents();
-
-      for (let i = 0; i < firstDay.getDay(); i++) {
-        const empty = document.createElement("div");
-        empty.className = "day empty";
-        calendar.appendChild(empty);
-      }
-
-      for (let day = 1; day <= lastDay.getDate(); day++) {
-        const date = new Date(year, month, day);
-        const dateKey = toDateKey(date);
-        const dayEvents = events.filter(e => e.date === dateKey);
-        const el = document.createElement("button");
-        el.type = "button";
-        el.className = "day";
-        if (dateKey === selectedDate) el.classList.add("selected");
-        if (dateKey === toDateKey(new Date())) el.classList.add("today");
-        el.onclick = () => selectDate(dateKey);
-        const visibleEvents = dayEvents.slice(0, 2).map(e => `<span class="mini-event ${e.category}" title="${escapeHTML(e.title)}">${escapeHTML(compactTitle(e))}</span>`).join("");
-        const more = dayEvents.length > 2 ? `<span class="more-events">+${dayEvents.length - 2} compromisso(s)</span>` : "";
-        el.innerHTML = `<div class="day-number">${day}</div>` + visibleEvents + more;
-        calendar.appendChild(el);
-      }
-    }
-
-    function renderSelectedDate() {
-      const title = document.getElementById("selectedTitle");
-      const subtitle = document.getElementById("selectedSubtitle");
-      const list = document.getElementById("selectedEvents");
-      const date = new Date(selectedDate + "T12:00:00");
-      const events = filteredEvents().filter(e => e.date === selectedDate);
-      title.textContent = date.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long" });
-      subtitle.textContent = events.length ? `${events.length} item(ns) nesta data.` : "Nenhum compromisso nesta data.";
-      list.innerHTML = events.length ? events.map(eventHTML).join("") : `<div class="empty-state">Data livre.</div>`;
-    }
-
-    function renderEventsList() {
-      const list = document.getElementById("allEvents");
-      const events = filteredEvents();
-      list.innerHTML = events.length ? events.map(eventHTML).join("") : `<div class="empty-state">Nenhum compromisso encontrado.</div>`;
-    }
-
-    function renderStats() {
-      const today = toDateKey(new Date());
-      const events = allEventsRaw();
-      document.getElementById("statToday").textContent = events.filter(e => e.date === today).length;
-      document.getElementById("statWeek").textContent = events.filter(e => daysFromToday(e.date) >= 0 && daysFromToday(e.date) <= 7).length;
-      document.getElementById("statDeadlines").textContent = events.filter(e => e.category === "prazo").length;
-      document.getElementById("statPayments").textContent = events.filter(e => e.category === "financeiro").length;
-    }
-
-    function eventHTML(e) {
-      const source = e.source === "portal" ? "automático" : "manual";
-      return `
-        <article class="event-item">
-          <div class="event-top">
-            <div>
-              <span class="mini-event ${e.category}" style="display:inline-block;margin-bottom:8px">${categoryName(e.category)}</span>
-              <div class="event-title">${escapeHTML(e.title)}</div>
-              <div class="event-date">${formatDate(e.date)} às ${e.time}</div>
-            </div>
-            <span class="badge">${source}</span>
-          </div>
-          <p class="muted" style="margin-bottom:0">${escapeHTML(e.notes || "Sem observações.")}</p>
-        </article>`;
-    }
-
-    function addManualEvent(event) {
-      event.preventDefault();
-      const newEvent = {
-        id: randomId(),
-        title: document.getElementById("newTitle").value,
-        date: document.getElementById("newDate").value,
-        time: document.getElementById("newTime").value,
-        category: document.getElementById("newCategory").value,
-        source: "manual",
-        notes: document.getElementById("newNotes").value || "Sem observações."
-      };
-      manualEvents.push(newEvent);
-      saveManualEvents();
-      selectedDate = newEvent.date;
-      currentDate = new Date(newEvent.date + "T12:00:00");
-      currentDate.setDate(1);
-      event.target.reset();
-      renderAll();
-    }
-
-    function selectDate(dateKey) { selectedDate = dateKey; renderAll(); }
-    function changeMonth(direction) { currentDate.setMonth(currentDate.getMonth() + direction); renderAll(); }
-    function focusForm() { document.getElementById("formCard").scrollIntoView({ behavior: "smooth", block: "start" }); setTimeout(() => document.getElementById("newTitle").focus(), 350); }
-    function renderAll() { renderStats(); renderCalendar(); renderSelectedDate(); renderEventsList(); }
-    function saveManualEvents() { localStorage.setItem("agendaJM_manualEvents", JSON.stringify(manualEvents)); }
-
-    function toDateKey(date) {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    }
-    function nextDate(days) { const d = new Date(); d.setDate(d.getDate() + days); return toDateKey(d); }
-    function formatDate(dateKey) { return new Date(dateKey + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" }); }
-    function daysFromToday(dateKey) { const today = new Date(toDateKey(new Date()) + "T12:00:00"); const target = new Date(dateKey + "T12:00:00"); return Math.ceil((target - today) / 86400000); }
-    function money(value) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value); }
-    function randomId() { return (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now() + Math.random()); }
-    function categoryName(category) { return ({ jm: "JM Neto", igreja: "Igreja", pessoal: "Pessoal", prazo: "Prazo", financeiro: "Financeiro" })[category] || category; }
-    function compactTitle(event) {
-      const map = { prazo: "Entrega", financeiro: "Pagamento", jm: "Reunião", igreja: "Igreja", pessoal: "Pessoal" };
-      if (event.category === "prazo" || event.category === "financeiro") {
-        const parts = event.title.split("—");
-        const client = parts[1] ? parts[1].trim() : "";
-        return client ? `${map[event.category]} · ${client}` : map[event.category];
-      }
-      const clean = event.title.replace(/compromisso/gi, "Comp.").replace(/reunião com/gi, "Reunião");
-      return clean.length > 18 ? clean.slice(0, 18) + "…" : clean;
-    }
-    function escapeHTML(str) { return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
-
-    renderAll();
-  </script>
+async function loadPortalData(){
+  if(!CONFIG.supabaseUrl||!CONFIG.supabaseAnonKey){document.getElementById("syncBadge").textContent="portal não conectado";return;}
+  try{
+    const client=window.supabase.createClient(CONFIG.supabaseUrl,CONFIG.supabaseAnonKey);
+    const c=CONFIG.columns;
+    const {data:projects,error:pErr}=await client.from(CONFIG.projectsTable).select("*");
+    if(pErr)throw pErr;
+    portalProjects=(projects||[]).map(p=>({client:p[c.client]||p.cliente||"Cliente",project:p[c.project]||p.nome_projeto||p.tipo||"Projeto",deliveryDate:p[c.deliveryDate]||p.data_entrega, paymentDate:p[c.paymentDate]||p.data_pagamento, amount:p[c.amount]||p.valor||0,status:p[c.status]||""}));
+    document.getElementById("syncBadge").textContent="portal conectado";
+  }catch(err){console.warn(err);document.getElementById("syncBadge").textContent="erro ao conectar";}
+}
+function portalEvents(){
+  const events=[];
+  portalProjects.forEach((p,i)=>{
+    if(p.deliveryDate)events.push({id:`portal-delivery-${i}`,title:`Entrega · ${p.client}`,fullTitle:`Entregar ${p.project} — ${p.client}`,date:normalizeDate(p.deliveryDate),time:"09:00",category:"prazo",source:"portal",notes:p.status?`Status: ${p.status}`:"Gerado pelo portal."});
+    if(p.paymentDate)events.push({id:`portal-payment-${i}`,title:`Pagamento · ${p.client}`,fullTitle:`Receber pagamento — ${p.client}`,date:normalizeDate(p.paymentDate),time:"10:00",category:"financeiro",source:"portal",notes:p.amount?`Valor previsto: ${money(Number(p.amount))}`:"Gerado pelo portal."});
+  });
+  portalPayments.forEach((p,i)=>{if(p.date)events.push({id:`portal-pay-${i}`,title:`Pagamento · ${p.client||"Cliente"}`,fullTitle:`Receber pagamento — ${p.client||"Cliente"}`,date:normalizeDate(p.date),time:p.time||"10:00",category:"financeiro",source:"portal",notes:p.amount?`Valor previsto: ${money(Number(p.amount))}`:"Gerado pelo portal."})});
+  return events.filter(e=>e.date);
+}
+function allEventsRaw(){return [...manualEvents,...portalEvents()].sort((a,b)=>`${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));}
+function filteredEvents(){const s=(document.getElementById("searchInput")?.value||"").toLowerCase();const cat=document.getElementById("categoryFilter")?.value||"todos";return allEventsRaw().filter(e=>((e.fullTitle||e.title)+" "+(e.notes||"")).toLowerCase().includes(s)&&(cat==="todos"||e.category===cat));}
+function compactTitle(e){return e.title||e.fullTitle||"Compromisso";}
+function renderCalendar(){const cal=document.getElementById("calendar");cal.innerHTML="";const y=currentDate.getFullYear(),m=currentDate.getMonth();document.getElementById("periodTitle").textContent=currentDate.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});const first=new Date(y,m,1),last=new Date(y,m+1,0),events=filteredEvents();for(let i=0;i<first.getDay();i++){let el=document.createElement("div");el.className="day empty";cal.appendChild(el);}for(let d=1;d<=last.getDate();d++){const date=new Date(y,m,d),key=toDateKey(date),dayEvents=events.filter(e=>e.date===key);const el=document.createElement("button");el.type="button";el.className="day"+(key===selectedDate?" selected":"")+(key===toDateKey(new Date())?" today":"");el.onclick=()=>selectDate(key);el.ondragover=ev=>{ev.preventDefault();el.classList.add("drag-over")};el.ondragleave=()=>el.classList.remove("drag-over");el.ondrop=ev=>dropEvent(ev,key,el);el.innerHTML=`<div class="day-top"><span class="day-number">${d}</span>${dayEvents.length?`<span class="day-count">${dayEvents.length}</span>`:""}</div>`+dayEvents.slice(0,2).map(e=>`<div draggable="${e.source==='manual'}" ondragstart="dragEvent(event,'${e.id}')" class="mini-event ${e.category}"><span>${ICONS[e.category]}</span><span>${compactTitle(e)}</span></div>`).join("")+(dayEvents.length>2?`<span class="more-events">+${dayEvents.length-2} eventos</span>`:"");cal.appendChild(el);}}
+function renderWeek(){const wrap=document.getElementById("weekView");wrap.innerHTML="";const start=startOfWeek(selectedDate);const events=filteredEvents();wrap.appendChild(div("time-col","Semana"));for(let i=0;i<7;i++){const date=new Date(start);date.setDate(start.getDate()+i);const key=toDateKey(date);const col=div("week-col"+(key===selectedDate?" selected":""),`<div class="week-date">${date.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit"})}</div>`);col.onclick=()=>selectDate(key);col.ondragover=ev=>ev.preventDefault();col.ondrop=ev=>dropEvent(ev,key,col);events.filter(e=>e.date===key).forEach(e=>{const item=div(`week-event ${e.category}`,`${ICONS[e.category]} ${e.fullTitle||e.title}<small>${e.time} · ${LABELS[e.category]}</small>`);item.draggable=e.source==="manual";item.ondragstart=ev=>dragEvent(ev,e.id);col.appendChild(item);});wrap.appendChild(col);}document.getElementById("periodTitle").textContent=`Semana de ${formatDate(toDateKey(start))}`;}
+function renderSelectedDate(){const title=document.getElementById("selectedTitle"),sub=document.getElementById("selectedSubtitle"),list=document.getElementById("selectedEvents"),date=new Date(selectedDate+"T12:00:00"),events=filteredEvents().filter(e=>e.date===selectedDate);title.textContent=date.toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});sub.textContent=events.length?`${events.length} item(ns) nesta data.`:"Nenhum compromisso nesta data.";list.innerHTML=events.length?events.map(eventHTML).join(""):`<div class="empty-state">Dia livre.</div>`;}
+function renderEventsList(){const list=document.getElementById("allEvents"),events=filteredEvents();list.innerHTML=events.length?events.map(eventHTML).join(""):`<div class="empty-state">Nenhum compromisso encontrado.</div>`;}
+function renderStats(){const today=toDateKey(new Date()),events=allEventsRaw();document.getElementById("statToday").textContent=events.filter(e=>e.date===today).length;document.getElementById("statWeek").textContent=events.filter(e=>daysFromToday(e.date)>=0&&daysFromToday(e.date)<=7).length;document.getElementById("statDeadlines").textContent=events.filter(e=>e.category==="prazo").length;document.getElementById("statPayments").textContent=events.filter(e=>e.category==="financeiro").length;const urgent=events.filter(e=>daysFromToday(e.date)>=0&&daysFromToday(e.date)<=2&&(e.category==="prazo"||e.category==="financeiro"));const box=document.getElementById("noticeBox");if(urgent.length){box.classList.remove("hidden");box.innerHTML=`⚠️ ${urgent.length} prazo(s)/pagamento(s) vencendo em até 2 dias.`}else box.classList.add("hidden");}
+function eventHTML(e){return `<article class="event-item" draggable="${e.source==='manual'}" ondragstart="dragEvent(event,'${e.id}')"><div class="event-top"><div><div class="event-title">${ICONS[e.category]} ${e.fullTitle||e.title}</div><div class="event-meta">${formatDate(e.date)} às ${e.time} · ${LABELS[e.category]}</div></div><span class="badge">${e.source==='portal'?'portal':'manual'}</span></div>${e.notes?`<p class="source">${e.notes}</p>`:""}</article>`;}
+function addManualEvent(ev){ev.preventDefault();manualEvents.push({id:crypto.randomUUID(),title:document.getElementById("newTitle").value,fullTitle:document.getElementById("newTitle").value,date:document.getElementById("newDate").value,time:document.getElementById("newTime").value,category:document.getElementById("newCategory").value,source:"manual",notes:document.getElementById("newNotes").value||""});saveManual();selectedDate=document.getElementById("newDate").value;ev.target.reset();renderAll();}
+function dragEvent(ev,id){ev.dataTransfer.setData("text/plain",id);}function dropEvent(ev,dateKey,el){ev.preventDefault();el.classList.remove("drag-over");const id=ev.dataTransfer.getData("text/plain");const item=manualEvents.find(e=>e.id===id);if(!item)return;item.date=dateKey;saveManual();selectedDate=dateKey;renderAll();}
+function setView(view){currentView=view;document.getElementById("monthArea").style.display=view==="month"?"block":"none";document.getElementById("weekView").classList.toggle("active",view==="week");document.getElementById("monthBtn").className=view==="month"?"btn small active":"btn secondary small";document.getElementById("weekBtn").className=view==="week"?"btn small active":"btn secondary small";renderAll();}
+function selectDate(key){selectedDate=key;renderAll();}function changePeriod(dir){if(currentView==="month")currentDate.setMonth(currentDate.getMonth()+dir);else{let d=new Date(selectedDate+"T12:00:00");d.setDate(d.getDate()+dir*7);selectedDate=toDateKey(d);currentDate=new Date(d.getFullYear(),d.getMonth(),1);}renderAll();}function goToday(){const now=new Date();selectedDate=toDateKey(now);currentDate=new Date(now.getFullYear(),now.getMonth(),1);renderAll();}
+function toggleTheme(){document.body.classList.toggle("dark");localStorage.setItem("agendaJM.theme",document.body.classList.contains("dark")?"dark":"light");updateThemeButton();}function updateThemeButton(){const b=document.getElementById("themeBtn");if(b)b.textContent=document.body.classList.contains("dark")?"☀️ Tema claro":"🌙 Tema escuro";}
+function focusForm(){document.getElementById("formCard").scrollIntoView({behavior:"smooth",block:"start"});setTimeout(()=>document.getElementById("newTitle").focus(),300)}function saveManual(){localStorage.setItem("agendaJM.manualEvents",JSON.stringify(manualEvents));}
+function renderAll(){renderStats();if(currentView==="month")renderCalendar();else renderWeek();renderSelectedDate();renderEventsList();}
+function div(cls,html){const d=document.createElement("div");d.className=cls;d.innerHTML=html;return d;}function toDateKey(date){return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`;}function normalizeDate(v){if(!v)return"";if(typeof v==="string")return v.slice(0,10);return toDateKey(new Date(v));}function formatDate(k){return new Date(k+"T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});}function daysFromToday(k){return Math.ceil((new Date(k+"T12:00:00")-new Date(toDateKey(new Date())+"T12:00:00"))/86400000);}function money(v){return new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(v||0);}function startOfWeek(k){const d=new Date(k+"T12:00:00");d.setDate(d.getDate()-d.getDay());return d;}
+loadPortalData().then(renderAll);renderAll();
+</script>
 </body>
 </html>
