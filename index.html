@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Agenda JM - v11 pagamentos corrigidos</title>
+<title>Agenda JM - v12 pagamentos corrigidos</title>
 <!-- VERSAO 2026-05-31-10: modal do dia realmente compacto, remover Mover e corrigir arrastar na Agenda -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -290,8 +290,6 @@ function normStatus(s){return String(s||'').toLowerCase().normalize('NFD').repla
 function isProjectDone(b){const st=normStatus([b.projectStatus,b.status,b.deliveryStatus,b.entregaStatus,b.situacao].join(' '));return !!(b.delivered||b.entregue||b.deliveredAt||b.entregueEm||b.done||b.completed||st.includes('concluido')||st.includes('concluida')||st.includes('entregue')||st.includes('finalizado')||st.includes('finalizada')||st.includes('cancelado')||st.includes('perdido'))}
 function isProjectClosed(b){const st=normStatus([b.status,b.projectStatus].join(' '));return !!(b.entrega||b.paymentDue||Array.isArray(b.payments)||st.includes('fechado')||st.includes('aprovado')||st.includes('andamento')||st.includes('concluido')||st.includes('entregue')||b.projectStatus)}
 function projectName(b){return Array.isArray(b.projetos)?b.projetos.join(', '):(b.projeto||b.tipo||'Projeto')}
-function paymentSum(b){const arr=Array.isArray(b.payments)?b.payments:[];let sum=arr.reduce((acc,p)=>acc+(Number(p.value??p.valor??p.amount??p.total??0)||0),0);return Math.max(Number(b.received)||0,sum)}
-function budgetTotal(b){return Number(b.negociado||b.final||b.total||b.valor||b.price||0)||0}
 function truthyPaid(v){
   if(v===true)return true;
   if(v===false||v==null||v==='')return false;
@@ -299,24 +297,51 @@ function truthyPaid(v){
   return ['true','sim','s','yes','y','1','pago','paga','recebido','recebida','quitado','quitada','concluido','concluida'].includes(t);
 }
 function paidNumber(v){
-  if(typeof v==='number')return v;
+  if(typeof v==='number')return Number.isFinite(v)?v:0;
   if(typeof v==='string'){const n=Number(v.replace(/[^\d,.-]/g,'').replace(/\./g,'').replace(',','.'));return Number.isFinite(n)?n:0}
   return 0;
 }
-function paymentDone(b){const st=normStatus([b.financeStatus,b.paymentStatus,b.statusPagamento,b.situacaoPagamento,b.paymentSituation,b.situacaoFinanceira,b.financeiro].join(' ')); if(truthyPaid(b.paid)||truthyPaid(b.quitado)||truthyPaid(b.pago)||truthyPaid(b.paymentPaid)||b.receivedAt||b.paidAt||b.pagoEm||b.recebidoEm) return true; if(st.includes('pago')||st.includes('quitado')||st.includes('recebido')||st.includes('concluido')) return true; const arr=Array.isArray(b.payments)?b.payments:[]; if(arr.length) return arr.every(paymentIsDone); const paid=paidNumber(b.receivedAmount??b.paidAmount??b.valorRecebido??b.valorPago??b.totalRecebido??b.received??0), total=budgetTotal(b); if(total>0) return paid>=total-0.01; return paid>0}
+function budgetTotal(b){return paidNumber(b.negociado??b.final??b.total??b.valor??b.price??0)}
+function receivedTotal(b){
+  const direct=paidNumber(b.received??b.recebido??b.receivedAmount??b.paidAmount??b.valorRecebido??b.valorPago??b.totalRecebido??b.totalPago??b.amountReceived??b.amountPaid??0);
+  const arr=Array.isArray(b.payments)?b.payments:[];
+  const byInstallments=arr.reduce((acc,p)=>acc+(paymentIsDone(p)?paymentAmount(p):paidNumber(p.receivedAmount??p.paidAmount??p.valorRecebido??p.valorPago??p.receivedValue??p.paidValue??0)),0);
+  return Math.max(direct,byInstallments);
+}
+function paymentSum(b){return receivedTotal(b)}
+function paymentDone(b){
+  const st=normStatus([b.financeStatus,b.paymentStatus,b.statusPagamento,b.situacaoPagamento,b.paymentSituation,b.situacaoFinanceira,b.financeiro].join(' '));
+  if(truthyPaid(b.paid)||truthyPaid(b.quitado)||truthyPaid(b.pago)||truthyPaid(b.paymentPaid)||b.receivedAt||b.paidAt||b.pagoEm||b.recebidoEm)return true;
+  if(st.includes('pago')||st.includes('quitado')||st.includes('recebido')||st.includes('concluido'))return true;
+  const total=budgetTotal(b), received=receivedTotal(b);
+  if(total>0&&received>=total-0.01)return true;
+  const arr=Array.isArray(b.payments)?b.payments:[];
+  if(arr.length)return arr.every((p,i)=>isInstallmentDone(b,p,i));
+  return received>0;
+}
 function recurrenceDates(ev){if(!ev.repeat||ev.repeat==='none')return [ev.date]; const dates=[]; const base=parseDate(ev.date); if(!base)return dates; const start=new Date(current.getFullYear()-1,0,1), end=new Date(current.getFullYear()+2,11,31); let d=new Date(base); const next=()=>{ if(ev.repeat==='weekly')d.setDate(d.getDate()+7); else if(ev.repeat==='monthly')d=new Date(d.getFullYear(),d.getMonth()+1,base.getDate()); else d=new Date(d.getFullYear()+1,base.getMonth(),base.getDate()); }; while(d<start)next(); for(let i=0;i<160&&d<=end;i++){dates.push(iso(d)); next(); } return dates}
-function paymentDate(p){return dateOnly(p?.due||p?.dueDate||p?.vencimento||p?.date||p?.data||p?.paidAt||p?.receivedAt)}
-function paymentAmount(p){return Number(p?.value??p?.valor??p?.amount??p?.total??p?.price??0)||0}
+function paymentDate(p){return dateOnly(p?.due||p?.dueDate||p?.vencimento||p?.date||p?.data||p?.dataVencimento||p?.vencimentoEm||p?.paidAt||p?.receivedAt)}
+function paymentAmount(p){return paidNumber(p?.value??p?.valor??p?.amount??p?.total??p?.price??p?.parcela??0)}
 function paymentIsDone(p){
   if(!p)return false;
-  const st=normStatus([p.status,p.situacao,p.state,p.paymentStatus,p.financeStatus,p.situacaoPagamento].join(' '));
+  const st=normStatus([p.status,p.situacao,p.state,p.paymentStatus,p.financeStatus,p.situacaoPagamento,p.statusPagamento,p.label].join(' '));
   if(st.includes('pago')||st.includes('paga')||st.includes('recebido')||st.includes('recebida')||st.includes('quitado')||st.includes('quitada')||st.includes('concluido')||st.includes('concluida'))return true;
-  if(truthyPaid(p.paid)||truthyPaid(p.pago)||truthyPaid(p.quitado)||truthyPaid(p.received)||truthyPaid(p.recebido)||truthyPaid(p.done)||truthyPaid(p.completed))return true;
-  if(p.receivedAt||p.paidAt||p.pagoEm||p.recebidoEm||p.dataPagamento||p.dataRecebimento)return true;
+  if(truthyPaid(p.paid)||truthyPaid(p.pago)||truthyPaid(p.quitado)||truthyPaid(p.received)||truthyPaid(p.recebido)||truthyPaid(p.done)||truthyPaid(p.completed)||truthyPaid(p.isPaid)||truthyPaid(p.isReceived))return true;
+  if(p.receivedAt||p.paidAt||p.pagoEm||p.recebidoEm||p.dataPagamento||p.dataRecebimento||p.paymentDate||p.receiptDate)return true;
   const amount=paymentAmount(p);
-  const paid=paidNumber(p.receivedAmount??p.paidAmount??p.valorRecebido??p.valorPago??p.receivedValue??p.paidValue??(typeof p.received==='number'?p.received:0));
+  const paid=paidNumber(p.receivedAmount??p.paidAmount??p.valorRecebido??p.valorPago??p.receivedValue??p.paidValue??p.valorQuitado??p.amountPaid??p.amountReceived??(typeof p.received==='number'?p.received:0));
   if(amount>0&&paid>=amount-0.01)return true;
   return false;
+}
+function isInstallmentDone(b,p,i){
+  if(paymentIsDone(p))return true;
+  const received=receivedTotal(b);
+  if(received<=0)return false;
+  const payments=Array.isArray(b.payments)?b.payments:[];
+  const amount=paymentAmount(p);
+  if(amount<=0)return false;
+  const previous=payments.slice(0,i).reduce((acc,x)=>acc+paymentAmount(x),0);
+  return received>=previous+amount-0.01;
 }
 function priorityLabel(p){return p==='alta'?'Alta prioridade':p==='baixa'?'Baixa prioridade':'Prioridade normal'}
 function repeatLabel(r){return r==='weekly'?'Toda semana':r==='monthly'?'Todo mês':r==='yearly'?'Todo ano':'Não repetir'}
@@ -339,7 +364,7 @@ function getEvents(){
     payments.forEach((p,i)=>{
       const pd=paymentDate(p);
       if(!pd) return;
-      const done=paymentIsDone(p);
+      const done=isInstallmentDone(b,p,i);
       events.push({id:'pay_item_'+(b.id||cliente)+'_'+i,title:(p.title||p.nome||('Pagamento '+(i+1)))+' · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:pd,time:p.time||'10:00',source:'portal',status:done?'done':(daysDiff(pd)<0?'overdue':'pending'),details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(pd),Valor:paymentAmount(p)?money(paymentAmount(p)):'—',Situação:done?'Recebido/quitado':'Pendente',Origem:'Sistema de controle'}});
     });
     const due=dateOnly(b.paymentDue||b.vencimento||b.dataPagamento);
@@ -451,7 +476,7 @@ function loadLocalPortal(){try{const raw=localStorage.getItem('jm_state')||local
 async function signIn(){try{if(!sb)return alert('Supabase/config.js não carregou.'); const email=$('email').value.trim(), password=$('pass').value; const {data,error}=await sb.auth.signInWithPassword({email,password}); if(error)throw error; cloudUser=data.user; $('loginBox').classList.remove('show'); await loadCloud(true)}catch(e){alert('Erro ao entrar: '+e.message)}}
 async function signOut(){if(sb)await sb.auth.signOut();cloudUser=null;portalState={budgets:[],tasks:[]};render()}
 async function loadCloud(showMsg){try{if(!sb||!cloudUser){loadLocalPortal();render();return} const {data,error}=await sb.from('jm_state').select('data,updated_at').eq('user_id',cloudUser.id).maybeSingle(); if(error)throw error; if(data&&data.data){portalState=normalizeState(data.data); if(Array.isArray(data.data.agendaManualEvents)){manualEvents=data.data.agendaManualEvents.map(e=>({...e,priority:e.priority||'normal',doneDates:e.doneDates||{}})); localStorage.setItem('agenda_jm_manual',JSON.stringify(manualEvents));} if(data.data.agendaDayNotes){dayNotes=data.data.agendaDayNotes; localStorage.setItem('agenda_jm_day_notes',JSON.stringify(dayNotes));} localStorage.setItem('agenda_jm_last',new Date().toLocaleString('pt-BR'));} if(showMsg)alert('Agenda atualizada.'); render()}catch(e){alert('Erro ao carregar nuvem: '+e.message);render()}}
-function normalizeState(s){s=s||{};s.budgets=Array.isArray(s.budgets)?s.budgets:[];s.tasks=Array.isArray(s.tasks)?s.tasks:[];s.agendaManualEvents=Array.isArray(s.agendaManualEvents)?s.agendaManualEvents:[];s.agendaDayNotes=s.agendaDayNotes||{};s.budgets.forEach(b=>{if(!Array.isArray(b.projetos))b.projetos=b.projetos?[String(b.projetos)]:[];if(!Array.isArray(b.payments))b.payments=[];b.received=Number(b.received)||0});return s}
+function normalizeState(s){s=s||{};s.budgets=Array.isArray(s.budgets)?s.budgets:[];s.tasks=Array.isArray(s.tasks)?s.tasks:[];s.agendaManualEvents=Array.isArray(s.agendaManualEvents)?s.agendaManualEvents:[];s.agendaDayNotes=s.agendaDayNotes||{};s.budgets.forEach(b=>{if(!Array.isArray(b.projetos))b.projetos=b.projetos?[String(b.projetos)]:[];if(!Array.isArray(b.payments))b.payments=[];b.received=paidNumber(b.received??b.recebido??b.valorRecebido??b.totalRecebido??0)});return s}
 let syncTimer=null;
 function syncAgendaCloudDebounced(){clearTimeout(syncTimer);syncTimer=setTimeout(syncAgendaCloud,650)}
 async function syncAgendaCloud(){try{if(!sb||!cloudUser)return; const {data,error:readError}=await sb.from('jm_state').select('data').eq('user_id',cloudUser.id).maybeSingle(); if(readError)throw readError; const latest=normalizeState(data?.data||portalState||{}); const merged={...latest,agendaManualEvents:manualEvents,agendaDayNotes:dayNotes}; portalState=normalizeState(merged); const {error}=await sb.from('jm_state').upsert({user_id:cloudUser.id,data:merged,updated_at:new Date().toISOString()}); if(error)throw error; localStorage.setItem('agenda_jm_last',new Date().toLocaleString('pt-BR')); renderCloud()}catch(e){console.warn('Falha ao salvar agenda na nuvem:',e.message)}}
