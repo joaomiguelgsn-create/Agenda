@@ -369,10 +369,14 @@ function getEvents(){
       events.push({id:'pay_item_'+(b.id||cliente)+'_'+i,title:(p.title||p.nome||('Pagamento '+(i+1)))+' · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:pd,time:p.time||'10:00',source:'portal',status:done?'done':(daysDiff(pd)<0?'overdue':'pending'),details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(pd),Valor:paymentAmount(p)?money(paymentAmount(p)):'—',Situação:done?'Recebido/quitado':'Pendente',Origem:'Sistema de controle'}});
     });
     const due=dateOnly(b.paymentDue||b.vencimento||b.dataPagamento);
-    if(due && !payments.length){
+    if(due){
       const done=paymentDone(b);
       const paid=paymentSum(b), total=budgetTotal(b);
-      events.push({id:'pay_'+(b.id||cliente+due),title:'Pagamento · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:due,time:'10:00',source:'portal',status:done?'done':(daysDiff(due)<0?'overdue':'pending'),details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(due),'Recebido':money(paid),'Valor combinado': total?money(total):'—',Situação:done?'Recebido/quitado':'Pendente',Origem:'Sistema de controle'}});
+      const remaining=Math.max(0,total-paid);
+      const alreadyListed=payments.some((p,i)=>paymentDate(p)===due&&!isInstallmentDone(b,p,i));
+      if(!done&&!alreadyListed){
+        events.push({id:'pay_'+(b.id||cliente+due),title:'Pagamento · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:due,time:'10:00',source:'portal',status:daysDiff(due)<0?'overdue':'pending',details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(due),'A receber':remaining?money(remaining):(total?money(total):'—'),'Recebido até agora':money(paid),'Valor combinado':total?money(total):'—',Situação:'Pendente',Origem:'Sistema de controle'}});
+      }
     }
   });
   manualEvents.forEach(m=>{
