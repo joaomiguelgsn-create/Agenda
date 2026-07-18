@@ -139,6 +139,7 @@ body.dark-mode .calendar-legend,body.dark-mode .event-extra{color:var(--muted)}b
       <div class="quick-numbers">
         <div class="quick-number"><small>📌 Compromissos JM em 7 dias</small><b id="stJmWeek">0</b></div>
         <div class="quick-number"><small>📐 Entregas em 7 dias</small><b id="stDeliveriesWeek">0</b></div>
+        <div class="quick-number"><small>💵 Recebido nos últimos 7 dias</small><b id="stReceivedWeek">R$ 0,00</b></div>
       </div>
       <div class="drag-hint">Dica: compromissos manuais podem ser arrastados para outro dia no calendário.</div>
     </div>
@@ -377,14 +378,31 @@ function getEvents(){
           const covered=Math.min(p.value,Math.max(0,credit));
           credit-=covered;
           const remaining=Math.max(0,p.value-covered);
-          if(!p.date||remaining<=0.009)return;
-          events.push({id:'pay_plan_'+(b.id||cliente)+'_'+i,title:p.label+' · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:p.date,time:'10:00',source:'portal',status:daysDiff(p.date)<0?'overdue':'pending',details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(p.date),'Valor da etapa':money(p.value),'Já coberto':money(covered),'Falta receber':money(remaining),Origem:'Sistema de controle'}});
+          if(!p.date)return;
+          const done=remaining<=0.009;
+          const partial=!done&&covered>0.009;
+          events.push({
+            id:'pay_plan_'+(b.id||cliente)+'_'+i,
+            title:p.label+' · '+cliente,
+            kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',
+            date:p.date,time:'10:00',source:'portal',
+            status:done?'done':(daysDiff(p.date)<0?'overdue':'pending'),
+            amountPlanned:p.value,amountPaid:covered,amountDue:remaining,
+            details:{
+              Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(p.date),
+              'Valor previsto':money(p.value),
+              'Valor pago':money(covered),
+              'Falta receber':money(remaining),
+              Situação:done?'Pago':(partial?'Pagamento parcial':'A vencer'),
+              Origem:'Sistema de controle'
+            }
+          });
         });
     }else{
       const due=dateOnly(b.paymentDue||b.vencimento||b.dataPagamento);
       if(due&&!paymentDone(b)){
         const remaining=Math.max(0,total-paid);
-        events.push({id:'pay_'+(b.id||cliente+due),title:'Pagamento · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:due,time:'10:00',source:'portal',status:daysDiff(due)<0?'overdue':'pending',details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(due),'A receber':remaining?money(remaining):(total?money(total):'—'),'Recebido até agora':money(paid),'Valor combinado':total?money(total):'—',Situação:'Pendente',Origem:'Sistema de controle'}});
+        events.push({id:'pay_'+(b.id||cliente+due),title:'Pagamento · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:due,time:'10:00',source:'portal',status:daysDiff(due)<0?'overdue':'pending',amountPlanned:total,amountPaid:paid,amountDue:remaining,details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(due),'Valor previsto':total?money(total):'—','Valor pago':money(paid),'Falta receber':remaining?money(remaining):(total?money(total):'—'),Situação:paid>0?'Pagamento parcial':'A vencer',Origem:'Sistema de controle'}});
       }
     }
   });
@@ -405,7 +423,7 @@ function getEvents(){
 }
 function render(){applyTheme();renderCloud();renderStats();renderCalendar();renderDay();renderAlerts();renderCategoryFilters();renderCategoryCounters();renderUpcoming();renderAllEvents();syncPickers()}
 function renderCloud(){ $('cloudStatus').textContent=cloudUser?'Conectado':'Não conectado'; $('cloudLast').textContent=localStorage.getItem('agenda_jm_last')||'—'; $('cloudCount').textContent=(portalState.budgets||[]).length; $('loginToggle').textContent=cloudUser?'Sair':'Entrar'; if($('cloudSaveHint'))$('cloudSaveHint').textContent=cloudUser?'Conectado: manuais e notas salvam também na nuvem.':'Sem login: manuais e notas ficam neste navegador.'}
-function renderStats(){const ev=getEvents(),today=todayIso();const todayEvents=ev.filter(e=>e.date===today);const week=ev.filter(e=>e.status!=='done'&&daysDiff(e.date)>=0&&daysDiff(e.date)<=7); const money=week.filter(e=>e.kind==='financeiro').reduce((acc,e)=>acc+extractMoney(e),0); const jmWeek=week.filter(e=>['prazo','financeiro','jm','cliente','obra'].includes(e.category||e.kind)).length;$('stToday').textContent=todayEvents.length;$('stOverdue').textContent=ev.filter(e=>e.status==='overdue').length;$('stPending').textContent=week.length;$('stDone').textContent=money.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); const now=new Date();$('heroWeekday').textContent=now.toLocaleDateString('pt-BR',{weekday:'long'});$('heroDate').textContent=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});$('heroTodayCount').textContent=todayEvents.length+' compromisso(s) hoje'; if($('stJmWeek'))$('stJmWeek').textContent=jmWeek;$('stDeliveriesWeek').textContent=week.filter(e=>e.kind==='prazo').length}
+function renderStats(){const ev=getEvents(),today=todayIso();const todayEvents=ev.filter(e=>e.date===today);const week=ev.filter(e=>e.status!=='done'&&daysDiff(e.date)>=0&&daysDiff(e.date)<=7);const receivable=week.filter(e=>e.kind==='financeiro').reduce((acc,e)=>acc+(Number(e.amountDue)||0),0);const receivedWeek=ev.filter(e=>e.kind==='financeiro'&&e.status==='done'&&daysDiff(e.date)>=-6&&daysDiff(e.date)<=0).reduce((acc,e)=>acc+(Number(e.amountPaid)||0),0);const jmWeek=week.filter(e=>['prazo','financeiro','jm','cliente','obra'].includes(e.category||e.kind)).length;$('stToday').textContent=todayEvents.length;$('stOverdue').textContent=ev.filter(e=>e.status==='overdue').length;$('stPending').textContent=week.length;$('stDone').textContent=receivable.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const now=new Date();$('heroWeekday').textContent=now.toLocaleDateString('pt-BR',{weekday:'long'});$('heroDate').textContent=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});$('heroTodayCount').textContent=todayEvents.length+' compromisso(s) hoje';if($('stJmWeek'))$('stJmWeek').textContent=jmWeek;if($('stDeliveriesWeek'))$('stDeliveriesWeek').textContent=week.filter(e=>e.kind==='prazo').length;if($('stReceivedWeek'))$('stReceivedWeek').textContent=receivedWeek.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function renderCalendar(){const cal=$('calendar');cal.innerHTML='';const ev=getEvents();$('tabMonth').classList.toggle('active',view==='month');$('tabWeek').classList.toggle('active',view==='week');if($('tabAgenda'))$('tabAgenda').classList.toggle('active',view==='agenda');const wd=document.querySelector('.weekdays');if(wd)wd.style.display=view==='agenda'?'none':'';
   if(view==='agenda'){
     cal.className='agenda-list';$('calTitle').textContent='Agenda';renderAgendaView(cal,ev);return;
