@@ -312,18 +312,10 @@ function receivedTotal(b){
 function paymentSum(b){return receivedTotal(b)}
 function paymentDone(b){
   const st=normStatus([b.financeStatus,b.paymentStatus,b.statusPagamento,b.situacaoPagamento,b.paymentSituation,b.situacaoFinanceira,b.financeiro].join(' '));
-
-  // Só considera quitado quando o Controle disser isso explicitamente.
   if(truthyPaid(b.paid)||truthyPaid(b.quitado)||truthyPaid(b.pago)||truthyPaid(b.paymentPaid)||b.receivedAt||b.paidAt||b.pagoEm||b.recebidoEm)return true;
   if(st.includes('pago')||st.includes('quitado')||st.includes('recebido')||st.includes('concluido'))return true;
-
-  // Se houver valor total realmente salvo, compara com o total recebido.
   const total=budgetTotal(b), received=receivedTotal(b);
-  if(total>0)return received>=total-0.01;
-
-  // No Controle, b.payments é apenas o histórico do que já entrou.
-  // Sem um total salvo ou um status explícito, isso não prova quitação.
-  return false;
+  return total>0 && received>=total-0.01;
 }
 function recurrenceDates(ev){if(!ev.repeat||ev.repeat==='none')return [ev.date]; const dates=[]; const base=parseDate(ev.date); if(!base)return dates; const start=new Date(current.getFullYear()-1,0,1), end=new Date(current.getFullYear()+2,11,31); let d=new Date(base); const next=()=>{ if(ev.repeat==='weekly')d.setDate(d.getDate()+7); else if(ev.repeat==='monthly')d=new Date(d.getFullYear(),d.getMonth()+1,base.getDate()); else d=new Date(d.getFullYear()+1,base.getMonth(),base.getDate()); }; while(d<start)next(); for(let i=0;i<160&&d<=end;i++){dates.push(iso(d)); next(); } return dates}
 function paymentDate(p){return dateOnly(p?.due||p?.dueDate||p?.vencimento||p?.date||p?.data||p?.dataVencimento||p?.vencimentoEm||p?.paidAt||p?.receivedAt)}
@@ -367,14 +359,31 @@ function getEvents(){
       events.push({id:'del_'+(b.id||cliente+entrega),title:'Entrega · '+cliente,kind:'prazo',category:'prazo',priority:'alta',icon:'📐',date:entrega,time:'09:00',source:'portal',status:done?'done':(daysDiff(entrega)<0?'overdue':'pending'),details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Status:b.projectStatus||b.status||'Ativo',Entrega:br(entrega),Origem:'Sistema de controle'}});
     }
     const payments=Array.isArray(b.payments)?b.payments:[];
-    // No Controle, payments representa histórico de recebimentos já realizados.
-    // Esses registros não são parcelas futuras e não devem virar compromissos na Agenda.
-const due=dateOnly(b.paymentDue||b.vencimento||b.dataPagamento);
-    if(due){
-      const done=paymentDone(b);
-      const paid=paymentSum(b), total=budgetTotal(b);
-      const remaining=Math.max(0,total-paid);
-      if(!done){
+    const paymentPlan=Array.isArray(b.paymentPlan)?b.paymentPlan:[];
+    const total=budgetTotal(b);
+    const paid=receivedTotal(b);
+
+    if(paymentPlan.length){
+      let credit=paid;
+      paymentPlan
+        .map((p,i)=>({
+          label:p?.label||p?.title||p?.nome||('Etapa '+(i+1)),
+          date:paymentDate(p),
+          value:paymentAmount(p)
+        }))
+        .filter(p=>p.date||p.value)
+        .sort((a,b)=>String(a.date||'9999-12-31').localeCompare(String(b.date||'9999-12-31')))
+        .forEach((p,i)=>{
+          const covered=Math.min(p.value,Math.max(0,credit));
+          credit-=covered;
+          const remaining=Math.max(0,p.value-covered);
+          if(!p.date||remaining<=0.009)return;
+          events.push({id:'pay_plan_'+(b.id||cliente)+'_'+i,title:p.label+' · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:p.date,time:'10:00',source:'portal',status:daysDiff(p.date)<0?'overdue':'pending',details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(p.date),'Valor da etapa':money(p.value),'Já coberto':money(covered),'Falta receber':money(remaining),Origem:'Sistema de controle'}});
+        });
+    }else{
+      const due=dateOnly(b.paymentDue||b.vencimento||b.dataPagamento);
+      if(due&&!paymentDone(b)){
+        const remaining=Math.max(0,total-paid);
         events.push({id:'pay_'+(b.id||cliente+due),title:'Pagamento · '+cliente,kind:'financeiro',category:'financeiro',priority:'alta',icon:'💰',date:due,time:'10:00',source:'portal',status:daysDiff(due)<0?'overdue':'pending',details:{Cliente:cliente,Projeto:proj,Prioridade:'Alta',Vencimento:br(due),'A receber':remaining?money(remaining):(total?money(total):'—'),'Recebido até agora':money(paid),'Valor combinado':total?money(total):'—',Situação:'Pendente',Origem:'Sistema de controle'}});
       }
     }
