@@ -315,10 +315,12 @@ function paymentDone(b){
   if(truthyPaid(b.paid)||truthyPaid(b.quitado)||truthyPaid(b.pago)||truthyPaid(b.paymentPaid)||b.receivedAt||b.paidAt||b.pagoEm||b.recebidoEm)return true;
   if(st.includes('pago')||st.includes('quitado')||st.includes('recebido')||st.includes('concluido'))return true;
   const total=budgetTotal(b), received=receivedTotal(b);
-  if(total>0&&received>=total-0.01)return true;
+  // No sistema de controle, "payments" é histórico do que já foi recebido.
+  // Portanto, uma entrada parcial não pode quitar o vencimento restante.
+  if(total>0)return received>=total-0.01;
   const arr=Array.isArray(b.payments)?b.payments:[];
   if(arr.length)return arr.every((p,i)=>isInstallmentDone(b,p,i));
-  return received>0;
+  return false;
 }
 function recurrenceDates(ev){if(!ev.repeat||ev.repeat==='none')return [ev.date]; const dates=[]; const base=parseDate(ev.date); if(!base)return dates; const start=new Date(current.getFullYear()-1,0,1), end=new Date(current.getFullYear()+2,11,31); let d=new Date(base); const next=()=>{ if(ev.repeat==='weekly')d.setDate(d.getDate()+7); else if(ev.repeat==='monthly')d=new Date(d.getFullYear(),d.getMonth()+1,base.getDate()); else d=new Date(d.getFullYear()+1,base.getMonth(),base.getDate()); }; while(d<start)next(); for(let i=0;i<160&&d<=end;i++){dates.push(iso(d)); next(); } return dates}
 function paymentDate(p){return dateOnly(p?.due||p?.dueDate||p?.vencimento||p?.date||p?.data||p?.dataVencimento||p?.vencimentoEm||p?.paidAt||p?.receivedAt)}
