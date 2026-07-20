@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Agenda JM</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%23faf4ea'/><circle cx='32' cy='18' r='9' fill='%23d6a04a'/><path d='M32 27 L42 37 L37 39 L40 55 L32 49 L24 55 L27 39 L22 37 Z' fill='%23c97b1d'/></svg>">
-<!-- VERSAO 2026-05-31-10: modal do dia realmente compacto, remover Mover e corrigir arrastar na Agenda -->
+<!-- VERSAO 2026-07-20-11: recebido semanal usa a data real dos pagamentos; previsoes continuam na data prevista -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -423,7 +423,25 @@ function getEvents(){
 }
 function render(){applyTheme();renderCloud();renderStats();renderCalendar();renderDay();renderAlerts();renderCategoryFilters();renderCategoryCounters();renderUpcoming();renderAllEvents();syncPickers()}
 function renderCloud(){ $('cloudStatus').textContent=cloudUser?'Conectado':'Não conectado'; $('cloudLast').textContent=localStorage.getItem('agenda_jm_last')||'—'; $('cloudCount').textContent=(portalState.budgets||[]).length; $('loginToggle').textContent=cloudUser?'Sair':'Entrar'; if($('cloudSaveHint'))$('cloudSaveHint').textContent=cloudUser?'Conectado: manuais e notas salvam também na nuvem.':'Sem login: manuais e notas ficam neste navegador.'}
-function renderStats(){const ev=getEvents(),today=todayIso();const todayEvents=ev.filter(e=>e.date===today);const week=ev.filter(e=>e.status!=='done'&&daysDiff(e.date)>=0&&daysDiff(e.date)<=7);const receivable=week.filter(e=>e.kind==='financeiro').reduce((acc,e)=>acc+(Number(e.amountDue)||0),0);const receivedWeek=ev.filter(e=>e.kind==='financeiro'&&e.status==='done'&&daysDiff(e.date)>=-6&&daysDiff(e.date)<=0).reduce((acc,e)=>acc+(Number(e.amountPaid)||0),0);const jmWeek=week.filter(e=>['prazo','financeiro','jm','cliente','obra'].includes(e.category||e.kind)).length;$('stToday').textContent=todayEvents.length;$('stOverdue').textContent=ev.filter(e=>e.status==='overdue').length;$('stPending').textContent=week.length;$('stDone').textContent=receivable.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const now=new Date();$('heroWeekday').textContent=now.toLocaleDateString('pt-BR',{weekday:'long'});$('heroDate').textContent=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});$('heroTodayCount').textContent=todayEvents.length+' compromisso(s) hoje';if($('stJmWeek'))$('stJmWeek').textContent=jmWeek;if($('stDeliveriesWeek'))$('stDeliveriesWeek').textContent=week.filter(e=>e.kind==='prazo').length;if($('stReceivedWeek'))$('stReceivedWeek').textContent=receivedWeek.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function actualPaymentDate(p){
+  return dateOnly(p?.paidAt||p?.receivedAt||p?.pagoEm||p?.recebidoEm||p?.dataPagamento||p?.dataRecebimento||p?.paymentDate||p?.receiptDate||p?.date||p?.data);
+}
+function receivedInLast7Days(){
+  return (portalState.budgets||[]).reduce((total,b)=>{
+    const payments=Array.isArray(b?.payments)?b.payments:[];
+    if(payments.length){
+      return total+payments.reduce((sum,p)=>{
+        const dt=actualPaymentDate(p);
+        const diff=dt?daysDiff(dt):999999;
+        return diff>=-6&&diff<=0?sum+paymentAmount(p):sum;
+      },0);
+    }
+    const dt=dateOnly(b?.receivedAt||b?.paidAt||b?.pagoEm||b?.recebidoEm||b?.dataPagamento||b?.dataRecebimento||b?.paymentDate||b?.receiptDate);
+    const diff=dt?daysDiff(dt):999999;
+    return diff>=-6&&diff<=0?total+receivedTotal(b):total;
+  },0);
+}
+function renderStats(){const ev=getEvents(),today=todayIso();const todayEvents=ev.filter(e=>e.date===today);const week=ev.filter(e=>e.status!=='done'&&daysDiff(e.date)>=0&&daysDiff(e.date)<=7);const receivable=week.filter(e=>e.kind==='financeiro').reduce((acc,e)=>acc+(Number(e.amountDue)||0),0);const receivedWeek=receivedInLast7Days();const jmWeek=week.filter(e=>['prazo','financeiro','jm','cliente','obra'].includes(e.category||e.kind)).length;$('stToday').textContent=todayEvents.length;$('stOverdue').textContent=ev.filter(e=>e.status==='overdue').length;$('stPending').textContent=week.length;$('stDone').textContent=receivable.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});const now=new Date();$('heroWeekday').textContent=now.toLocaleDateString('pt-BR',{weekday:'long'});$('heroDate').textContent=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'long'});$('heroTodayCount').textContent=todayEvents.length+' compromisso(s) hoje';if($('stJmWeek'))$('stJmWeek').textContent=jmWeek;if($('stDeliveriesWeek'))$('stDeliveriesWeek').textContent=week.filter(e=>e.kind==='prazo').length;if($('stReceivedWeek'))$('stReceivedWeek').textContent=receivedWeek.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
 function renderCalendar(){const cal=$('calendar');cal.innerHTML='';const ev=getEvents();$('tabMonth').classList.toggle('active',view==='month');$('tabWeek').classList.toggle('active',view==='week');if($('tabAgenda'))$('tabAgenda').classList.toggle('active',view==='agenda');const wd=document.querySelector('.weekdays');if(wd)wd.style.display=view==='agenda'?'none':'';
   if(view==='agenda'){
     cal.className='agenda-list';$('calTitle').textContent='Agenda';renderAgendaView(cal,ev);return;
